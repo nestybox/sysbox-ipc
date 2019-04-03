@@ -1,2 +1,2 @@
 # sysvisor-protobuf
-Sysvisor's protobuf code for gRPC 
+Sysvisor's protobuf code for gRPC consumption.
