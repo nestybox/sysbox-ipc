@@ -71,7 +71,7 @@ package sysvisor_protobuf;
 
 
 // ContainerRegistration/Unregistration service definition.
-service ContainerStateChannel {
+service sysvisorStateChannel {
 
     // Generates a container-registration message
     rpc ContainerRegistration (ContainerData) returns (Response) {}

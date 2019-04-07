@@ -54,6 +54,19 @@ func containerDataToPbData(data *ContainerData) (*pb.ContainerData, error) {
 	}, nil
 }
 
+func pbDatatoContainerData(pbdata *pb.ContainerData) (*ContainerData, error) {
+	cTime, err := ptypes.Timestamp(pbdata.Ctime)
+	if err != nil {
+		return nil, fmt.Errorf("time conversion error: %v", err)
+	}
+
+	return &ContainerData{
+		Id:      pbdata.Id,
+		InitPid: pbdata.InitPid,
+		Ctime:   cTime,
+	}, nil
+}
+
 //
 // Registers container creation in sysvisor-fs. Notice that this
 // is a blocking call that can potentially have a minor impact
@@ -69,7 +82,7 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 	}
 	defer conn.Close()
 
-	cntrChanIntf := pb.NewContainerStateChannelClient(conn)
+	cntrChanIntf := pb.NewSysvisorStateChannelClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -100,7 +113,7 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 	}
 	defer conn.Close()
 
-	cntrChanIntf := pb.NewContainerStateChannelClient(conn)
+	cntrChanIntf := pb.NewSysvisorStateChannelClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -134,7 +147,7 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 	}
 	defer conn.Close()
 
-	cntrChanIntf := pb.NewContainerStateChannelClient(conn)
+	cntrChanIntf := pb.NewSysvisorStateChannelClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
