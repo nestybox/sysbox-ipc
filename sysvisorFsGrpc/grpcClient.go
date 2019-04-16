@@ -1,4 +1,4 @@
-package sysvisorGrpc
+package sysvisorFsGrpc
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
-	pb "github.com/nestybox/sysvisor/sysvisor-protobuf"
+	pb "github.com/nestybox/sysvisor/sysvisor-protobuf/sysvisorFsGrpc/protobuf"
 	"google.golang.org/grpc"
 )
 
@@ -28,7 +28,7 @@ type ContainerData struct {
 //
 // Establishes grpc connection to sysvisor-fs' remote-end.
 //
-func sysvisorfs_connect() *grpc.ClientConn {
+func connect() *grpc.ClientConn {
 
 	// Set up a connection to the server.
 	// TODO: Secure me through TLS.
@@ -76,7 +76,7 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 	var pbData *pb.ContainerData
 
 	// Set up sysvisorfs pipeline.
-	conn := sysvisorfs_connect()
+	conn := connect()
 	if conn == nil {
 		return fmt.Errorf("failed to connect with sysvisor-fs")
 	}
@@ -107,7 +107,7 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 	var pbData *pb.ContainerData
 
 	// Set up sysvisorfs pipeline.
-	conn := sysvisorfs_connect()
+	conn := connect()
 	if conn == nil {
 		return fmt.Errorf("failed to connect with sysvisor-fs")
 	}
@@ -141,7 +141,7 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 	var pbData *pb.ContainerData
 
 	// Set up sysvisorfs pipeline.
-	conn := sysvisorfs_connect()
+	conn := connect()
 	if conn == nil {
 		return fmt.Errorf("failed to connect with sysvisor-fs")
 	}
