@@ -1,19 +1,7 @@
 //
-// File hosting Sysvisorfs/runC Protobuffer Definitions.
+// File hosting Sysvisorfs Protobuffer Definitions.
 //
-// The following instructions should be followed prior to executing/generating
-// any gRPC code. Notice that this file serves as a protobuffer template to
-// generate code to be utilized in both runC and sysvisorfs modules, so its
-// presence is expected in both git repos. Eventually, we will find a better
-// packaging strategy so that a single file is maintained in Inception's repos.
-// For the time being, please make sure that this file is kept fully in-sync
-// in both runC and Sysvisorfs git modules.
-//
-// This file is currently present in these two paths:
-//
-// runC path:        inception/vendor/runc/sysvisorProtobuf/sysvisorfs.proto
-// sysvisorfs path:  inception/sysvisor/sysvisor-fs/sysvisorfs/sysvisorProtobuf/sysvisorfs.proto
-//
+// Build dependencies:
 //
 // gRPC/protobuffer installation instructions:
 //
@@ -45,29 +33,16 @@
 //
 // $ export PATH=$PATH:$GOPATH/bin
 //
-// 4) Execute protobuf compiler to auto-generate gRPC code/logic. See examples below
-//    for both runC and Sysvisorfs ends.
-//
-// Example 1: sysvisor-runc end (client side)
-//
-// rodny@deepblue-vm-1:~/go/src/github.com/opencontainers/runc$
-// protoc -I=$GOPATH/src/github.com/nestybox/sysvisor/sysvisor-protobuf/ --go_out=plugins=grpc:libsysvisor/sysvisor_protobuf sysvisor_protobuf.proto
-//
-// Example 2: sysvisor-fs end (server side)
-//
-// rodny@deepblue-vm-1:~/go/src/github.com/nestybox/sysvisor/sysvisor-fs$
-// protoc -I=$GOPATH/src/github.com/nestybox/sysvisor/sysvisor-protobuf --go_out=plugins=grpc:sysvisor_protobuf sysvisor_protobuf.proto
-
 
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.grpc.sysvisor.sysvisor_protobuf";
-option java_outer_classname = "sysvisor_protobuf";
+option java_package = "io.grpc.sysvisor.protobuf";
+option java_outer_classname = "protobuf";
 
 import "google/protobuf/timestamp.proto";
 
-package sysvisor_protobuf;
+package protobuf;
 
 
 // ContainerRegistration/Unregistration service definition.
