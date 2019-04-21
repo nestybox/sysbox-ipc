@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-const sysvisor_address = "localhost:50052"
+const sysvisorFsAddress = "localhost:50052"
 
 // Container info passed by the client to the server across the grpc channel
 type ContainerData struct {
@@ -32,7 +32,7 @@ func connect() *grpc.ClientConn {
 
 	// Set up a connection to the server.
 	// TODO: Secure me through TLS.
-	conn, err := grpc.Dial(sysvisor_address, grpc.WithInsecure())
+	conn, err := grpc.Dial(sysvisorFsAddress, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Could not connect to Sysvisorfs: %v", err)
 		return nil

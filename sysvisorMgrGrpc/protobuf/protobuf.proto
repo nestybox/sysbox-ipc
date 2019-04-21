@@ -1,0 +1,36 @@
+//
+// SysvisorMgr Protobuffer Definitions.
+//
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.sysvisor.protobuf";
+option java_outer_classname = "protobuf";
+
+package protobuf;
+
+// sysvisorMgr channel
+service sysvisorMgrStateChannel {
+
+    // Generates a uid allocation request
+    rpc UidAlloc (UidAllocReq) returns (UidAllocResp) {}
+
+    // Generates a uid freeing request
+    rpc UidFree (UidFreeReq) returns (UidFreeResp) {}
+}
+
+message UidAllocReq {
+    uint32 len = 1;
+}
+
+message UidAllocResp {
+    uint32 uid = 1;
+}
+
+message UidFreeReq {
+    uint32 uid = 1;
+}
+
+message UidFreeResp {
+}
