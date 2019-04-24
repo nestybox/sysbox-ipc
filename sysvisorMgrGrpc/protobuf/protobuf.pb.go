@@ -22,178 +22,195 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type UidAllocReq struct {
-	Len                  uint32   `protobuf:"varint,1,opt,name=len,proto3" json:"len,omitempty"`
+type SubidAllocReq struct {
+	Size                 uint64   `protobuf:"varint,1,opt,name=size,proto3" json:"size,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *UidAllocReq) Reset()         { *m = UidAllocReq{} }
-func (m *UidAllocReq) String() string { return proto.CompactTextString(m) }
-func (*UidAllocReq) ProtoMessage()    {}
-func (*UidAllocReq) Descriptor() ([]byte, []int) {
+func (m *SubidAllocReq) Reset()         { *m = SubidAllocReq{} }
+func (m *SubidAllocReq) String() string { return proto.CompactTextString(m) }
+func (*SubidAllocReq) ProtoMessage()    {}
+func (*SubidAllocReq) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c77a803fcbc0c059, []int{0}
 }
 
-func (m *UidAllocReq) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UidAllocReq.Unmarshal(m, b)
+func (m *SubidAllocReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubidAllocReq.Unmarshal(m, b)
 }
-func (m *UidAllocReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UidAllocReq.Marshal(b, m, deterministic)
+func (m *SubidAllocReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubidAllocReq.Marshal(b, m, deterministic)
 }
-func (m *UidAllocReq) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UidAllocReq.Merge(m, src)
+func (m *SubidAllocReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubidAllocReq.Merge(m, src)
 }
-func (m *UidAllocReq) XXX_Size() int {
-	return xxx_messageInfo_UidAllocReq.Size(m)
+func (m *SubidAllocReq) XXX_Size() int {
+	return xxx_messageInfo_SubidAllocReq.Size(m)
 }
-func (m *UidAllocReq) XXX_DiscardUnknown() {
-	xxx_messageInfo_UidAllocReq.DiscardUnknown(m)
+func (m *SubidAllocReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubidAllocReq.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UidAllocReq proto.InternalMessageInfo
+var xxx_messageInfo_SubidAllocReq proto.InternalMessageInfo
 
-func (m *UidAllocReq) GetLen() uint32 {
+func (m *SubidAllocReq) GetSize() uint64 {
 	if m != nil {
-		return m.Len
+		return m.Size
 	}
 	return 0
 }
 
-type UidAllocResp struct {
+type SubidAllocResp struct {
 	Uid                  uint32   `protobuf:"varint,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	Gid                  uint32   `protobuf:"varint,2,opt,name=gid,proto3" json:"gid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *UidAllocResp) Reset()         { *m = UidAllocResp{} }
-func (m *UidAllocResp) String() string { return proto.CompactTextString(m) }
-func (*UidAllocResp) ProtoMessage()    {}
-func (*UidAllocResp) Descriptor() ([]byte, []int) {
+func (m *SubidAllocResp) Reset()         { *m = SubidAllocResp{} }
+func (m *SubidAllocResp) String() string { return proto.CompactTextString(m) }
+func (*SubidAllocResp) ProtoMessage()    {}
+func (*SubidAllocResp) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c77a803fcbc0c059, []int{1}
 }
 
-func (m *UidAllocResp) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UidAllocResp.Unmarshal(m, b)
+func (m *SubidAllocResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubidAllocResp.Unmarshal(m, b)
 }
-func (m *UidAllocResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UidAllocResp.Marshal(b, m, deterministic)
+func (m *SubidAllocResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubidAllocResp.Marshal(b, m, deterministic)
 }
-func (m *UidAllocResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UidAllocResp.Merge(m, src)
+func (m *SubidAllocResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubidAllocResp.Merge(m, src)
 }
-func (m *UidAllocResp) XXX_Size() int {
-	return xxx_messageInfo_UidAllocResp.Size(m)
+func (m *SubidAllocResp) XXX_Size() int {
+	return xxx_messageInfo_SubidAllocResp.Size(m)
 }
-func (m *UidAllocResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_UidAllocResp.DiscardUnknown(m)
+func (m *SubidAllocResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubidAllocResp.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UidAllocResp proto.InternalMessageInfo
+var xxx_messageInfo_SubidAllocResp proto.InternalMessageInfo
 
-func (m *UidAllocResp) GetUid() uint32 {
+func (m *SubidAllocResp) GetUid() uint32 {
 	if m != nil {
 		return m.Uid
 	}
 	return 0
 }
 
-type UidFreeReq struct {
+func (m *SubidAllocResp) GetGid() uint32 {
+	if m != nil {
+		return m.Gid
+	}
+	return 0
+}
+
+type SubidFreeReq struct {
 	Uid                  uint32   `protobuf:"varint,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	Gid                  uint32   `protobuf:"varint,2,opt,name=gid,proto3" json:"gid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *UidFreeReq) Reset()         { *m = UidFreeReq{} }
-func (m *UidFreeReq) String() string { return proto.CompactTextString(m) }
-func (*UidFreeReq) ProtoMessage()    {}
-func (*UidFreeReq) Descriptor() ([]byte, []int) {
+func (m *SubidFreeReq) Reset()         { *m = SubidFreeReq{} }
+func (m *SubidFreeReq) String() string { return proto.CompactTextString(m) }
+func (*SubidFreeReq) ProtoMessage()    {}
+func (*SubidFreeReq) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c77a803fcbc0c059, []int{2}
 }
 
-func (m *UidFreeReq) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UidFreeReq.Unmarshal(m, b)
+func (m *SubidFreeReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubidFreeReq.Unmarshal(m, b)
 }
-func (m *UidFreeReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UidFreeReq.Marshal(b, m, deterministic)
+func (m *SubidFreeReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubidFreeReq.Marshal(b, m, deterministic)
 }
-func (m *UidFreeReq) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UidFreeReq.Merge(m, src)
+func (m *SubidFreeReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubidFreeReq.Merge(m, src)
 }
-func (m *UidFreeReq) XXX_Size() int {
-	return xxx_messageInfo_UidFreeReq.Size(m)
+func (m *SubidFreeReq) XXX_Size() int {
+	return xxx_messageInfo_SubidFreeReq.Size(m)
 }
-func (m *UidFreeReq) XXX_DiscardUnknown() {
-	xxx_messageInfo_UidFreeReq.DiscardUnknown(m)
+func (m *SubidFreeReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubidFreeReq.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UidFreeReq proto.InternalMessageInfo
+var xxx_messageInfo_SubidFreeReq proto.InternalMessageInfo
 
-func (m *UidFreeReq) GetUid() uint32 {
+func (m *SubidFreeReq) GetUid() uint32 {
 	if m != nil {
 		return m.Uid
 	}
 	return 0
 }
 
-type UidFreeResp struct {
+func (m *SubidFreeReq) GetGid() uint32 {
+	if m != nil {
+		return m.Gid
+	}
+	return 0
+}
+
+type SubidFreeResp struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *UidFreeResp) Reset()         { *m = UidFreeResp{} }
-func (m *UidFreeResp) String() string { return proto.CompactTextString(m) }
-func (*UidFreeResp) ProtoMessage()    {}
-func (*UidFreeResp) Descriptor() ([]byte, []int) {
+func (m *SubidFreeResp) Reset()         { *m = SubidFreeResp{} }
+func (m *SubidFreeResp) String() string { return proto.CompactTextString(m) }
+func (*SubidFreeResp) ProtoMessage()    {}
+func (*SubidFreeResp) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c77a803fcbc0c059, []int{3}
 }
 
-func (m *UidFreeResp) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UidFreeResp.Unmarshal(m, b)
+func (m *SubidFreeResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubidFreeResp.Unmarshal(m, b)
 }
-func (m *UidFreeResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UidFreeResp.Marshal(b, m, deterministic)
+func (m *SubidFreeResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubidFreeResp.Marshal(b, m, deterministic)
 }
-func (m *UidFreeResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UidFreeResp.Merge(m, src)
+func (m *SubidFreeResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubidFreeResp.Merge(m, src)
 }
-func (m *UidFreeResp) XXX_Size() int {
-	return xxx_messageInfo_UidFreeResp.Size(m)
+func (m *SubidFreeResp) XXX_Size() int {
+	return xxx_messageInfo_SubidFreeResp.Size(m)
 }
-func (m *UidFreeResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_UidFreeResp.DiscardUnknown(m)
+func (m *SubidFreeResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubidFreeResp.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UidFreeResp proto.InternalMessageInfo
+var xxx_messageInfo_SubidFreeResp proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*UidAllocReq)(nil), "protobuf.UidAllocReq")
-	proto.RegisterType((*UidAllocResp)(nil), "protobuf.UidAllocResp")
-	proto.RegisterType((*UidFreeReq)(nil), "protobuf.UidFreeReq")
-	proto.RegisterType((*UidFreeResp)(nil), "protobuf.UidFreeResp")
+	proto.RegisterType((*SubidAllocReq)(nil), "protobuf.SubidAllocReq")
+	proto.RegisterType((*SubidAllocResp)(nil), "protobuf.SubidAllocResp")
+	proto.RegisterType((*SubidFreeReq)(nil), "protobuf.SubidFreeReq")
+	proto.RegisterType((*SubidFreeResp)(nil), "protobuf.SubidFreeResp")
 }
 
 func init() { proto.RegisterFile("protobuf.proto", fileDescriptor_c77a803fcbc0c059) }
 
 var fileDescriptor_c77a803fcbc0c059 = []byte{
-	// 206 bytes of a gzipped FileDescriptorProto
+	// 224 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2b, 0x28, 0xca, 0x2f,
-	0xc9, 0x4f, 0x2a, 0x4d, 0xd3, 0x03, 0x33, 0x84, 0x38, 0x60, 0x7c, 0x25, 0x79, 0x2e, 0xee, 0xd0,
-	0xcc, 0x14, 0xc7, 0x9c, 0x9c, 0xfc, 0xe4, 0xa0, 0xd4, 0x42, 0x21, 0x01, 0x2e, 0xe6, 0x9c, 0xd4,
-	0x3c, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xde, 0x20, 0x10, 0x53, 0x49, 0x81, 0x8b, 0x07, 0xa1, 0xa0,
-	0xb8, 0x00, 0xa4, 0xa2, 0x34, 0x33, 0x05, 0xa6, 0xa2, 0x34, 0x33, 0x45, 0x49, 0x8e, 0x8b, 0x2b,
-	0x34, 0x33, 0xc5, 0xad, 0x28, 0x35, 0x15, 0x6a, 0x02, 0x9a, 0x3c, 0x2f, 0xd8, 0x0a, 0x88, 0x7c,
-	0x71, 0x81, 0xd1, 0x04, 0x46, 0x2e, 0xf1, 0xe2, 0xca, 0xe2, 0xb2, 0xcc, 0xe2, 0xfc, 0x22, 0xdf,
-	0xf4, 0xa2, 0xe0, 0x92, 0xc4, 0x92, 0x54, 0xe7, 0x8c, 0xc4, 0xbc, 0xbc, 0xd4, 0x1c, 0x21, 0x6b,
-	0x2e, 0x0e, 0x98, 0x65, 0x42, 0xa2, 0x7a, 0x70, 0x47, 0x23, 0xb9, 0x50, 0x4a, 0x0c, 0x9b, 0x70,
-	0x71, 0x81, 0x12, 0x83, 0x90, 0x05, 0x17, 0x3b, 0xd4, 0x1e, 0x21, 0x11, 0x14, 0x45, 0x50, 0xa7,
-	0x49, 0x89, 0x62, 0x11, 0x05, 0xe9, 0x74, 0x52, 0xe7, 0x92, 0xcc, 0xcc, 0xd7, 0x4b, 0x2f, 0x2a,
-	0x48, 0xd6, 0x83, 0xb9, 0x0c, 0xae, 0xd4, 0x09, 0x1e, 0x56, 0x01, 0x8c, 0x49, 0x6c, 0x60, 0xb6,
-	0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x0f, 0x8e, 0x1c, 0x15, 0x50, 0x01, 0x00, 0x00,
+	0xc9, 0x4f, 0x2a, 0x4d, 0xd3, 0x03, 0x33, 0x84, 0x38, 0x60, 0x7c, 0x25, 0x65, 0x2e, 0xde, 0xe0,
+	0xd2, 0xa4, 0xcc, 0x14, 0xc7, 0x9c, 0x9c, 0xfc, 0xe4, 0xa0, 0xd4, 0x42, 0x21, 0x21, 0x2e, 0x96,
+	0xe2, 0xcc, 0xaa, 0x54, 0x09, 0x46, 0x05, 0x46, 0x0d, 0x96, 0x20, 0x30, 0x5b, 0xc9, 0x84, 0x8b,
+	0x0f, 0x59, 0x51, 0x71, 0x81, 0x90, 0x00, 0x17, 0x73, 0x69, 0x66, 0x0a, 0x58, 0x11, 0x6f, 0x10,
+	0x88, 0x09, 0x12, 0x49, 0xcf, 0x4c, 0x91, 0x60, 0x82, 0x88, 0xa4, 0x67, 0xa6, 0x28, 0x19, 0x71,
+	0xf1, 0x80, 0x75, 0xb9, 0x15, 0xa5, 0xa6, 0x82, 0x4c, 0x26, 0x46, 0x0f, 0x3f, 0xd4, 0x39, 0x10,
+	0x3d, 0xc5, 0x05, 0x46, 0x73, 0x18, 0xb9, 0xc4, 0x8b, 0x2b, 0x8b, 0xcb, 0x32, 0x8b, 0xf3, 0x8b,
+	0x7c, 0xd3, 0x8b, 0x82, 0x4b, 0x12, 0x4b, 0x52, 0x9d, 0x33, 0x12, 0xf3, 0xf2, 0x52, 0x73, 0x84,
+	0x1c, 0xb9, 0xb8, 0x10, 0xce, 0x12, 0x12, 0xd7, 0x83, 0x7b, 0x12, 0xc5, 0x47, 0x52, 0x12, 0xd8,
+	0x25, 0x8a, 0x0b, 0x94, 0x18, 0x84, 0xec, 0xb8, 0x38, 0xe1, 0xf6, 0x09, 0x89, 0xa1, 0x29, 0x84,
+	0x3a, 0x5c, 0x4a, 0x1c, 0xab, 0x38, 0x48, 0xbf, 0x93, 0x3a, 0x97, 0x64, 0x66, 0xbe, 0x5e, 0x7a,
+	0x51, 0x41, 0xb2, 0x1e, 0xcc, 0x95, 0x70, 0xc5, 0x4e, 0xf0, 0x50, 0x0e, 0x60, 0x4c, 0x62, 0x03,
+	0xb3, 0x8d, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x34, 0x0f, 0x49, 0xd4, 0x8a, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -209,9 +226,9 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SysvisorMgrStateChannelClient interface {
 	// Generates a uid allocation request
-	UidAlloc(ctx context.Context, in *UidAllocReq, opts ...grpc.CallOption) (*UidAllocResp, error)
+	SubidAlloc(ctx context.Context, in *SubidAllocReq, opts ...grpc.CallOption) (*SubidAllocResp, error)
 	// Generates a uid freeing request
-	UidFree(ctx context.Context, in *UidFreeReq, opts ...grpc.CallOption) (*UidFreeResp, error)
+	SubidFree(ctx context.Context, in *SubidFreeReq, opts ...grpc.CallOption) (*SubidFreeResp, error)
 }
 
 type sysvisorMgrStateChannelClient struct {
@@ -222,18 +239,18 @@ func NewSysvisorMgrStateChannelClient(cc *grpc.ClientConn) SysvisorMgrStateChann
 	return &sysvisorMgrStateChannelClient{cc}
 }
 
-func (c *sysvisorMgrStateChannelClient) UidAlloc(ctx context.Context, in *UidAllocReq, opts ...grpc.CallOption) (*UidAllocResp, error) {
-	out := new(UidAllocResp)
-	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/UidAlloc", in, out, opts...)
+func (c *sysvisorMgrStateChannelClient) SubidAlloc(ctx context.Context, in *SubidAllocReq, opts ...grpc.CallOption) (*SubidAllocResp, error) {
+	out := new(SubidAllocResp)
+	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/SubidAlloc", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *sysvisorMgrStateChannelClient) UidFree(ctx context.Context, in *UidFreeReq, opts ...grpc.CallOption) (*UidFreeResp, error) {
-	out := new(UidFreeResp)
-	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/UidFree", in, out, opts...)
+func (c *sysvisorMgrStateChannelClient) SubidFree(ctx context.Context, in *SubidFreeReq, opts ...grpc.CallOption) (*SubidFreeResp, error) {
+	out := new(SubidFreeResp)
+	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/SubidFree", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -243,47 +260,47 @@ func (c *sysvisorMgrStateChannelClient) UidFree(ctx context.Context, in *UidFree
 // SysvisorMgrStateChannelServer is the server API for SysvisorMgrStateChannel service.
 type SysvisorMgrStateChannelServer interface {
 	// Generates a uid allocation request
-	UidAlloc(context.Context, *UidAllocReq) (*UidAllocResp, error)
+	SubidAlloc(context.Context, *SubidAllocReq) (*SubidAllocResp, error)
 	// Generates a uid freeing request
-	UidFree(context.Context, *UidFreeReq) (*UidFreeResp, error)
+	SubidFree(context.Context, *SubidFreeReq) (*SubidFreeResp, error)
 }
 
 func RegisterSysvisorMgrStateChannelServer(s *grpc.Server, srv SysvisorMgrStateChannelServer) {
 	s.RegisterService(&_SysvisorMgrStateChannel_serviceDesc, srv)
 }
 
-func _SysvisorMgrStateChannel_UidAlloc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UidAllocReq)
+func _SysvisorMgrStateChannel_SubidAlloc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubidAllocReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SysvisorMgrStateChannelServer).UidAlloc(ctx, in)
+		return srv.(SysvisorMgrStateChannelServer).SubidAlloc(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protobuf.sysvisorMgrStateChannel/UidAlloc",
+		FullMethod: "/protobuf.sysvisorMgrStateChannel/SubidAlloc",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SysvisorMgrStateChannelServer).UidAlloc(ctx, req.(*UidAllocReq))
+		return srv.(SysvisorMgrStateChannelServer).SubidAlloc(ctx, req.(*SubidAllocReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SysvisorMgrStateChannel_UidFree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UidFreeReq)
+func _SysvisorMgrStateChannel_SubidFree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubidFreeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SysvisorMgrStateChannelServer).UidFree(ctx, in)
+		return srv.(SysvisorMgrStateChannelServer).SubidFree(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protobuf.sysvisorMgrStateChannel/UidFree",
+		FullMethod: "/protobuf.sysvisorMgrStateChannel/SubidFree",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SysvisorMgrStateChannelServer).UidFree(ctx, req.(*UidFreeReq))
+		return srv.(SysvisorMgrStateChannelServer).SubidFree(ctx, req.(*SubidFreeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -293,12 +310,12 @@ var _SysvisorMgrStateChannel_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*SysvisorMgrStateChannelServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "UidAlloc",
-			Handler:    _SysvisorMgrStateChannel_UidAlloc_Handler,
+			MethodName: "SubidAlloc",
+			Handler:    _SysvisorMgrStateChannel_SubidAlloc_Handler,
 		},
 		{
-			MethodName: "UidFree",
-			Handler:    _SysvisorMgrStateChannel_UidFree_Handler,
+			MethodName: "SubidFree",
+			Handler:    _SysvisorMgrStateChannel_SubidFree_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -22,8 +22,8 @@ const (
 )
 
 type ServerCallbacks struct {
-	UidAlloc func(len uint32) (uint32, error)
-	UidFree  func(id uint32) error
+	SubidAlloc func(size uint64) (uint32, uint32, error)
+	SubidFree  func(uid, gid uint32) error
 }
 
 type ServerStub struct {
@@ -58,20 +58,21 @@ func (s *ServerStub) Init() error {
 	return nil
 }
 
-// Generates a uid/gid allocation request
-func (s *ServerStub) UidAlloc(ctx context.Context, req *pb.UidAllocReq) (*pb.UidAllocResp, error) {
+func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb.SubidAllocResp, error) {
 	if req == nil {
-		return &pb.UidAllocResp{}, errors.New("invalid payload")
+		return &pb.SubidAllocResp{}, errors.New("invalid payload")
 	}
-	uid, err := s.cb.UidAlloc(req.GetLen())
-	return &pb.UidAllocResp{Uid: uid}, err
+	uid, gid, err := s.cb.SubidAlloc(req.GetSize())
+	return &pb.SubidAllocResp{
+		Uid: uid,
+		Gid: gid,
+	}, err
 }
 
-// Generates a uid/gid freeing request
-func (s *ServerStub) UidFree(ctx context.Context, req *pb.UidFreeReq) (*pb.UidFreeResp, error) {
+func (s *ServerStub) SubidFree(ctx context.Context, req *pb.SubidFreeReq) (*pb.SubidFreeResp, error) {
 	if req == nil {
-		return &pb.UidFreeResp{}, errors.New("invalid payload")
+		return &pb.SubidFreeResp{}, errors.New("invalid payload")
 	}
-	err := s.cb.UidFree(req.GetUid())
-	return &pb.UidFreeResp{}, err
+	err := s.cb.SubidFree(req.GetUid(), req.GetGid())
+	return &pb.SubidFreeResp{}, err
 }

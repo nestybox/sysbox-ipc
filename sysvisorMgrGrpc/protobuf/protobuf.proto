@@ -14,23 +14,25 @@ package protobuf;
 service sysvisorMgrStateChannel {
 
     // Generates a uid allocation request
-    rpc UidAlloc (UidAllocReq) returns (UidAllocResp) {}
+    rpc SubidAlloc (SubidAllocReq) returns (SubidAllocResp) {}
 
     // Generates a uid freeing request
-    rpc UidFree (UidFreeReq) returns (UidFreeResp) {}
+    rpc SubidFree (SubidFreeReq) returns (SubidFreeResp) {}
 }
 
-message UidAllocReq {
-    uint32 len = 1;
+message SubidAllocReq {
+    uint64 size = 1;
 }
 
-message UidAllocResp {
+message SubidAllocResp {
     uint32 uid = 1;
+    uint32 gid = 2;
 }
 
-message UidFreeReq {
+message SubidFreeReq {
     uint32 uid = 1;
+    uint32 gid = 2;
 }
 
-message UidFreeResp {
+message SubidFreeResp {
 }
