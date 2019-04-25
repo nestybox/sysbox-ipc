@@ -10,7 +10,6 @@ import (
 	"os"
 
 	pb "github.com/nestybox/sysvisor/sysvisor-protobuf/sysvisorMgrGrpc/protobuf"
-	"github.com/sirupsen/logrus"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -50,8 +49,6 @@ func (s *ServerStub) Init() error {
 		return fmt.Errorf("failed to chmod %s: %v", grpcSockAddr, err)
 	}
 
-	logrus.Infof("Listening on %v", grpcSockAddr)
-
 	grpcServer := grpc.NewServer()
 	pb.RegisterSysvisorMgrStateChannelServer(grpcServer, s)
 	reflection.Register(grpcServer)
@@ -80,4 +77,8 @@ func (s *ServerStub) SubidFree(ctx context.Context, req *pb.SubidFreeReq) (*pb.S
 	}
 	err := s.cb.SubidFree(req.GetUid(), req.GetGid())
 	return &pb.SubidFreeResp{}, err
+}
+
+func (s *ServerStub) GetAddr() string {
+	return grpcSockAddr
 }
