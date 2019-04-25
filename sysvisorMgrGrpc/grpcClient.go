@@ -27,8 +27,9 @@ func connect() (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
-// SubidAlloc requests sysvisor-mgr to allocate a range of 'size' subuids and subgids
-func SubidAlloc(size uint64) (uint32, uint32, error) {
+// SubidAlloc requests sysvisor-mgr to allocate a range of 'size' subuids and subgids for
+// the container with the given 'id'.
+func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	conn, err := connect()
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
@@ -40,6 +41,7 @@ func SubidAlloc(size uint64) (uint32, uint32, error) {
 	defer cancel()
 
 	req := &pb.SubidAllocReq{
+		Id:   id,
 		Size: size,
 	}
 
@@ -51,10 +53,9 @@ func SubidAlloc(size uint64) (uint32, uint32, error) {
 	return resp.Uid, resp.Gid, err
 }
 
-// SubidFree releases previously allocated uid and gid ranges; the given uid and gid must
-// be from a previous call to SubidAlloc() (otherwise this function returns a "not-found"
-// error)
-func SubidFree(uid, gid uint32) error {
+// SubidFree releases previously allocated uid and gid ranges for the container with
+// the given 'id'
+func SubidFree(id string) error {
 
 	conn, err := connect()
 	if err != nil {
@@ -67,8 +68,7 @@ func SubidFree(uid, gid uint32) error {
 	defer cancel()
 
 	req := &pb.SubidFreeReq{
-		Uid: uid,
-		Gid: gid,
+		Id: id,
 	}
 
 	_, err = ch.SubidFree(ctx, req)

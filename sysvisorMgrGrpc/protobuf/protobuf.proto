@@ -21,7 +21,8 @@ service sysvisorMgrStateChannel {
 }
 
 message SubidAllocReq {
-    uint64 size = 1;
+    string Id = 1;
+    uint64 size = 2;
 }
 
 message SubidAllocResp {
@@ -30,8 +31,7 @@ message SubidAllocResp {
 }
 
 message SubidFreeReq {
-    uint32 uid = 1;
-    uint32 gid = 2;
+    string Id  = 1;
 }
 
 message SubidFreeResp {

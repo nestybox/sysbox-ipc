@@ -18,8 +18,8 @@ import (
 const grpcSockAddr = "/run/sysvisor/sysmgr.sock"
 
 type ServerCallbacks struct {
-	SubidAlloc func(size uint64) (uint32, uint32, error)
-	SubidFree  func(uid, gid uint32) error
+	SubidAlloc func(id string, size uint64) (uint32, uint32, error)
+	SubidFree  func(id string) error
 }
 
 type ServerStub struct {
@@ -64,7 +64,7 @@ func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb
 	if req == nil {
 		return &pb.SubidAllocResp{}, errors.New("invalid payload")
 	}
-	uid, gid, err := s.cb.SubidAlloc(req.GetSize())
+	uid, gid, err := s.cb.SubidAlloc(req.GetId(), req.GetSize())
 	return &pb.SubidAllocResp{
 		Uid: uid,
 		Gid: gid,
@@ -75,7 +75,7 @@ func (s *ServerStub) SubidFree(ctx context.Context, req *pb.SubidFreeReq) (*pb.S
 	if req == nil {
 		return &pb.SubidFreeResp{}, errors.New("invalid payload")
 	}
-	err := s.cb.SubidFree(req.GetUid(), req.GetGid())
+	err := s.cb.SubidFree(req.GetId())
 	return &pb.SubidFreeResp{}, err
 }
 
