@@ -5,34 +5,33 @@ package sysvisorMgrGrpc
 import (
 	"context"
 	"fmt"
-	"log"
+	"net"
 	"time"
 
 	pb "github.com/nestybox/sysvisor/sysvisor-protobuf/sysvisorMgrGrpc/protobuf"
 	"google.golang.org/grpc"
 )
 
-// TODO: merge this constant with grpcMaster; should be configurable ...
-const sysvisorMgrAddr = "localhost:50053"
+func unixConnect(addr string, t time.Duration) (net.Conn, error) {
+	unixAddr, err := net.ResolveUnixAddr("unix", grpcSockAddr)
+	conn, err := net.DialUnix("unix", nil, unixAddr)
+	return conn, err
+}
 
 // connect establishes grpc connection to the sysvisorMgr daemon.
-func connect() *grpc.ClientConn {
-
-	// TODO: Secure me through TLS.
-	conn, err := grpc.Dial(sysvisorMgrAddr, grpc.WithInsecure())
+func connect() (*grpc.ClientConn, error) {
+	conn, err := grpc.Dial(grpcSockAddr, grpc.WithInsecure(), grpc.WithDialer(unixConnect))
 	if err != nil {
-		log.Fatalf("Could not connect to sysvisor-mgr: %v", err)
-		return nil
+		return nil, err
 	}
-
-	return conn
+	return conn, nil
 }
 
 // SubidAlloc requests sysvisor-mgr to allocate a range of 'size' subuids and subgids
 func SubidAlloc(size uint64) (uint32, uint32, error) {
-	conn := connect()
-	if conn == nil {
-		return 0, 0, fmt.Errorf("failed to connect with sysvisor-mgr")
+	conn, err := connect()
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
 	}
 	defer conn.Close()
 
@@ -57,9 +56,9 @@ func SubidAlloc(size uint64) (uint32, uint32, error) {
 // error)
 func SubidFree(uid, gid uint32) error {
 
-	conn := connect()
-	if conn == nil {
-		return fmt.Errorf("failed to connect with sysvisor-mgr")
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
 	}
 	defer conn.Close()
 
@@ -72,7 +71,7 @@ func SubidFree(uid, gid uint32) error {
 		Gid: gid,
 	}
 
-	_, err := ch.SubidFree(ctx, req)
+	_, err = ch.SubidFree(ctx, req)
 	if err != nil {
 		return fmt.Errorf("failed to invoke subidFree via grpc: %v", err)
 	}

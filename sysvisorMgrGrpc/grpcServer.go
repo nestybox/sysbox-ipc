@@ -6,20 +6,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net"
+	"os"
 
 	pb "github.com/nestybox/sysvisor/sysvisor-protobuf/sysvisorMgrGrpc/protobuf"
+	"github.com/sirupsen/logrus"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-const (
-	// TODO: get rid of this; use unix domain socket instead
-	// TODO: merge this with sysvisorMgrAddr; same for sysvisorFsGrpc ...
-	port = ":50053"
-)
+const grpcSockAddr = "/run/sysvisor/sysmgr.sock"
 
 type ServerCallbacks struct {
 	SubidAlloc func(size uint64) (uint32, uint32, error)
@@ -40,12 +37,20 @@ func NewServerStub(cb *ServerCallbacks) *ServerStub {
 }
 
 func (s *ServerStub) Init() error {
-
-	// TODO: Change me to unix domain socket instead: more secure/efficient.
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	if err := os.RemoveAll(grpcSockAddr); err != nil {
+		return err
 	}
+
+	lis, err := net.Listen("unix", grpcSockAddr)
+	if err != nil {
+		return fmt.Errorf("failed to listen: %v", err)
+	}
+
+	if err := os.Chmod(grpcSockAddr, 0600); err != nil {
+		return fmt.Errorf("failed to chmod %s: %v", grpcSockAddr, err)
+	}
+
+	logrus.Infof("Listening on %v", grpcSockAddr)
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterSysvisorMgrStateChannelServer(grpcServer, s)
