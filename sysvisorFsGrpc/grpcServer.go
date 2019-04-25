@@ -44,18 +44,18 @@ type Callback func(client interface{}, c *ContainerData) error
 type CallbacksMap = map[MessageType]Callback
 
 type Server struct {
-	Client    interface{}
+	Ctx       interface{}
 	Callbacks CallbacksMap
 }
 
-func NewServer(client interface{}, cb *CallbacksMap) *Server {
+func NewServer(ctx interface{}, cb *CallbacksMap) *Server {
 
 	if cb == nil {
 		return nil
 	}
 
 	newServer := &Server{
-		Client:    client,
+		Ctx:       ctx,
 		Callbacks: make(map[MessageType]Callback),
 	}
 
@@ -137,7 +137,7 @@ func (s *Server) executeCallback(mtype MessageType,
 		return &pb.Response{Success: false}, err
 	}
 
-	err = (cb)(s.Client, cont)
+        err = (cb)(s.Ctx, cont)
 	if err != nil {
 		return &pb.Response{Success: false},
 			errors.New("gRPC server: unexpected response from client endpoint")
