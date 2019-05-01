@@ -9,7 +9,7 @@ import (
 	"net"
 	"os"
 
-	pb "github.com/nestybox/sysvisor/sysvisor-protobuf/sysvisorMgrGrpc/protobuf"
+	pb "github.com/nestybox/sysvisor/sysvisor-ipc/sysvisorMgrGrpc/protobuf"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

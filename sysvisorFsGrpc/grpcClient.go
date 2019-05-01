@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
-	pb "github.com/nestybox/sysvisor/sysvisor-protobuf/sysvisorFsGrpc/protobuf"
+	pb "github.com/nestybox/sysvisor/sysvisor-ipc/sysvisorFsGrpc/protobuf"
 	"google.golang.org/grpc"
 )
 
