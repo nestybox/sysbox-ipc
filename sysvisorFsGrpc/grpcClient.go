@@ -11,8 +11,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-const sysvisorFsAddress = "localhost:50052"
-
 // Container info passed by the client to the server across the grpc channel
 type ContainerData struct {
 	Id       string
@@ -48,9 +46,13 @@ func containerDataToPbData(data *ContainerData) (*pb.ContainerData, error) {
 	}
 
 	return &pb.ContainerData{
-		Id:      data.Id,
-		InitPid: data.InitPid,
-		Ctime:   pbTime,
+		Id:       data.Id,
+		InitPid:  data.InitPid,
+		Ctime:    pbTime,
+		UidFirst: data.UidFirst,
+		UidSize:  data.UidSize,
+		GidFirst: data.GidFirst,
+		GidSize:  data.GidSize,
 	}, nil
 }
 
@@ -61,9 +63,13 @@ func pbDatatoContainerData(pbdata *pb.ContainerData) (*ContainerData, error) {
 	}
 
 	return &ContainerData{
-		Id:      pbdata.Id,
-		InitPid: pbdata.InitPid,
-		Ctime:   cTime,
+		Id:       pbdata.Id,
+		InitPid:  pbdata.InitPid,
+		Ctime:    cTime,
+		UidFirst: pbdata.UidFirst,
+		UidSize:  pbdata.UidSize,
+		GidFirst: pbdata.GidFirst,
+		GidSize:  pbdata.GidSize,
 	}, nil
 }
 

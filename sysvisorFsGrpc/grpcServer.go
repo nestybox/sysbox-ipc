@@ -17,10 +17,12 @@ import (
 // (ipc) logic.
 //
 
+
 const (
-	// TODO: Is there a better tcp-socket? Find out.
-	port = ":50052"
+      sysvisorFsPort = ":50052"
+      sysvisorFsAddress = "localhost" + sysvisorFsPort
 )
+
 
 const (
 	Unknown MessageType = iota
@@ -69,7 +71,7 @@ func NewServer(ctx interface{}, cb *CallbacksMap) *Server {
 func (s *Server) Init() {
 
 	// TODO: Change me to unix-socket instead: more secure/efficient.
-	lis, err := net.Listen("tcp", port)
+	lis, err := net.Listen("tcp", sysvisorFsPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
