@@ -10,18 +10,30 @@ option java_outer_classname = "protobuf";
 
 package protobuf;
 
+//
 // sysvisorMgr channel
+//
 service sysvisorMgrStateChannel {
 
-    // Generates a uid allocation request
+    // Subuid(gid) allocation request
     rpc SubidAlloc (SubidAllocReq) returns (SubidAllocResp) {}
 
-    // Generates a uid freeing request
+    // Subuid(gid) freeing request
     rpc SubidFree (SubidFreeReq) returns (SubidFreeResp) {}
+
+    // Supplementary mount request
+    rpc ReqSupMounts (SupMountsReq) returns (SupMountsReqResp) {}
+
+    // Supplementary mount release
+    rpc RelSupMounts (SupMountsRel) returns (SupMountsRelResp) {}
 }
 
+//
+// Subid alloc & free
+//
+
 message SubidAllocReq {
-    string Id = 1;
+    string id = 1;
     uint64 size = 2;
 }
 
@@ -31,8 +43,38 @@ message SubidAllocResp {
 }
 
 message SubidFreeReq {
-    string Id  = 1;
+    string id = 1;
 }
 
 message SubidFreeResp {
+}
+
+//
+// Supplementary mount request & response
+//
+
+message Mount {
+  string source = 1;
+  string dest = 2;
+  string type = 3;
+  repeated string opt = 4;
+}
+
+message SupMountsReq {
+    string id = 1;
+    string rootfs = 2;
+    uint32 uid = 3;
+    uint32 gid = 4;
+    bool shiftUids = 5;
+}
+
+message SupMountsReqResp {
+    repeated Mount mounts = 1;
+}
+
+message SupMountsRel {
+    string id = 1;
+}
+
+message SupMountsRelResp {
 }

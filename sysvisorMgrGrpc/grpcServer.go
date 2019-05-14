@@ -18,8 +18,10 @@ import (
 const grpcSockAddr = "/run/sysvisor/sysmgr.sock"
 
 type ServerCallbacks struct {
-	SubidAlloc func(id string, size uint64) (uint32, uint32, error)
-	SubidFree  func(id string) error
+	SubidAlloc   func(id string, size uint64) (uint32, uint32, error)
+	SubidFree    func(id string) error
+	ReqSupMounts func(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error)
+	RelSupMounts func(id string) error
 }
 
 type ServerStub struct {
@@ -60,6 +62,10 @@ func (s *ServerStub) Init() error {
 	return nil
 }
 
+func (s *ServerStub) GetAddr() string {
+	return grpcSockAddr
+}
+
 func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb.SubidAllocResp, error) {
 	if req == nil {
 		return &pb.SubidAllocResp{}, errors.New("invalid payload")
@@ -79,6 +85,26 @@ func (s *ServerStub) SubidFree(ctx context.Context, req *pb.SubidFreeReq) (*pb.S
 	return &pb.SubidFreeResp{}, err
 }
 
-func (s *ServerStub) GetAddr() string {
-	return grpcSockAddr
+func (s *ServerStub) ReqSupMounts(ctx context.Context, req *pb.SupMountsReq) (*pb.SupMountsReqResp, error) {
+	if req == nil {
+		return &pb.SupMountsReqResp{}, errors.New("invalid payload")
+	}
+
+	mounts, err := s.cb.ReqSupMounts(req.GetId(), req.GetRootfs(), req.GetUid(), req.GetGid(), req.GetShiftUids())
+	if err != nil {
+		return &pb.SupMountsReqResp{}, err
+	}
+
+	return &pb.SupMountsReqResp{
+		Mounts: mounts,
+	}, nil
+
+}
+
+func (s *ServerStub) RelSupMounts(ctx context.Context, req *pb.SupMountsRel) (*pb.SupMountsRelResp, error) {
+	if req == nil {
+		return &pb.SupMountsRelResp{}, errors.New("invalid payload")
+	}
+	err := s.cb.RelSupMounts(req.GetId())
+	return &pb.SupMountsRelResp{}, err
 }
