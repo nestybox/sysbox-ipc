@@ -8,7 +8,7 @@ import (
 	"net"
 	"time"
 
-	pb "github.com/nestybox/sysvisor/sysvisor-ipc/sysvisorMgrGrpc/protobuf"
+	pb "github.com/nestybox/sysvisor-ipc/sysvisorMgrGrpc/protobuf"
 	"google.golang.org/grpc"
 )
 
