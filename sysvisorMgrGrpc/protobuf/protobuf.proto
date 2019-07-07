@@ -15,21 +15,39 @@ package protobuf;
 //
 service sysvisorMgrStateChannel {
 
+    // Container registration
+    rpc Register (RegisterReq) returns (RegisterResp) {}
+
+    // Container Unregistration
+    rpc Unregister (UnregisterReq) returns (UnregisterResp) {}
+
     // Subuid(gid) allocation request
     rpc SubidAlloc (SubidAllocReq) returns (SubidAllocResp) {}
 
-    // Subuid(gid) freeing request
-    rpc SubidFree (SubidFreeReq) returns (SubidFreeResp) {}
-
     // Supplementary mount request
     rpc ReqSupMounts (SupMountsReq) returns (SupMountsReqResp) {}
-
-    // Supplementary mount release
-    rpc RelSupMounts (SupMountsRel) returns (SupMountsRelResp) {}
 }
 
 //
-// Subid alloc & free
+// Registration & Unregistration
+//
+
+message RegisterReq {
+    string id = 1;
+}
+
+message RegisterResp {
+}
+
+message UnregisterReq {
+    string id = 1;
+}
+
+message UnregisterResp {
+}
+
+//
+// Subid alloc
 //
 
 message SubidAllocReq {
@@ -42,15 +60,8 @@ message SubidAllocResp {
     uint32 gid = 2;
 }
 
-message SubidFreeReq {
-    string id = 1;
-}
-
-message SubidFreeResp {
-}
-
 //
-// Supplementary mount request & response
+// Supplementary mount request
 //
 
 message Mount {
@@ -70,11 +81,4 @@ message SupMountsReq {
 
 message SupMountsReqResp {
     repeated Mount mounts = 1;
-}
-
-message SupMountsRel {
-    string id = 1;
-}
-
-message SupMountsRelResp {
 }

@@ -18,6 +18,8 @@ import (
 const grpcSockAddr = "/run/sysvisor/sysmgr.sock"
 
 type ServerCallbacks struct {
+	Register     func(id string) error
+	Unregister   func(id string) error
 	SubidAlloc   func(id string, size uint64) (uint32, uint32, error)
 	SubidFree    func(id string) error
 	ReqSupMounts func(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error)
@@ -66,6 +68,22 @@ func (s *ServerStub) GetAddr() string {
 	return grpcSockAddr
 }
 
+func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.RegisterResp, error) {
+	if req == nil {
+		return &pb.RegisterResp{}, errors.New("invalid payload")
+	}
+	err := s.cb.Register(req.GetId())
+	return &pb.RegisterResp{}, err
+}
+
+func (s *ServerStub) Unregister(ctx context.Context, req *pb.UnregisterReq) (*pb.UnregisterResp, error) {
+	if req == nil {
+		return &pb.UnregisterResp{}, errors.New("invalid payload")
+	}
+	err := s.cb.Unregister(req.GetId())
+	return &pb.UnregisterResp{}, err
+}
+
 func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb.SubidAllocResp, error) {
 	if req == nil {
 		return &pb.SubidAllocResp{}, errors.New("invalid payload")
@@ -75,14 +93,6 @@ func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb
 		Uid: uid,
 		Gid: gid,
 	}, err
-}
-
-func (s *ServerStub) SubidFree(ctx context.Context, req *pb.SubidFreeReq) (*pb.SubidFreeResp, error) {
-	if req == nil {
-		return &pb.SubidFreeResp{}, errors.New("invalid payload")
-	}
-	err := s.cb.SubidFree(req.GetId())
-	return &pb.SubidFreeResp{}, err
 }
 
 func (s *ServerStub) ReqSupMounts(ctx context.Context, req *pb.SupMountsReq) (*pb.SupMountsReqResp, error) {
@@ -99,12 +109,4 @@ func (s *ServerStub) ReqSupMounts(ctx context.Context, req *pb.SupMountsReq) (*p
 		Mounts: mounts,
 	}, nil
 
-}
-
-func (s *ServerStub) RelSupMounts(ctx context.Context, req *pb.SupMountsRel) (*pb.SupMountsRelResp, error) {
-	if req == nil {
-		return &pb.SupMountsRelResp{}, errors.New("invalid payload")
-	}
-	err := s.cb.RelSupMounts(req.GetId())
-	return &pb.SupMountsRelResp{}, err
 }

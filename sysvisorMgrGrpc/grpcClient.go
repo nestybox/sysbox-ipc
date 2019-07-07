@@ -27,6 +27,54 @@ func connect() (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
+// Registers a container with sysvisor-mgr
+func Register(id string) error {
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysvisorMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	req := &pb.RegisterReq{
+		Id: id,
+	}
+
+	_, err = ch.Register(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke Register via grpc: %v", err)
+	}
+
+	return nil
+}
+
+// Unregisters a container with sysvisor-mgr
+func Unregister(id string) error {
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysvisorMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	req := &pb.UnregisterReq{
+		Id: id,
+	}
+
+	_, err = ch.Unregister(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke Unregister via grpc: %v", err)
+	}
+
+	return nil
+}
+
 // SubidAlloc requests sysvisor-mgr to allocate a range of 'size' subuids and subgids.
 func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	conn, err := connect()
@@ -50,30 +98,6 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	}
 
 	return resp.Uid, resp.Gid, err
-}
-
-// SubidFree releases the subuid(gid) ranges previously allocated via SubidAlloc().
-func SubidFree(id string) error {
-	conn, err := connect()
-	if err != nil {
-		return fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
-	}
-	defer conn.Close()
-
-	ch := pb.NewSysvisorMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	req := &pb.SubidFreeReq{
-		Id: id,
-	}
-
-	_, err = ch.SubidFree(ctx, req)
-	if err != nil {
-		return fmt.Errorf("failed to invoke subidFree via grpc: %v", err)
-	}
-
-	return nil
 }
 
 // ReqSupMounts requests sysvisor-mgr for supplementary mount configs for the container
@@ -106,29 +130,4 @@ func ReqSupMounts(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]
 	}
 
 	return resp.GetMounts(), nil
-}
-
-// RelSupMounts tells sysvisor-mgr to release resources associated with supplementary
-// mount configs associated with the given container
-func RelSupMounts(id string) error {
-	conn, err := connect()
-	if err != nil {
-		return fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
-	}
-	defer conn.Close()
-
-	ch := pb.NewSysvisorMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	rel := &pb.SupMountsRel{
-		Id: id,
-	}
-
-	_, err = ch.RelSupMounts(ctx, rel)
-	if err != nil {
-		return fmt.Errorf("failed to invoke RelSupMounts via grpc: %v", err)
-	}
-
-	return nil
 }

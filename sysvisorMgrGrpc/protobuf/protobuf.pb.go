@@ -8,8 +8,6 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -24,6 +22,146 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type RegisterReq struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RegisterReq) Reset()         { *m = RegisterReq{} }
+func (m *RegisterReq) String() string { return proto.CompactTextString(m) }
+func (*RegisterReq) ProtoMessage()    {}
+func (*RegisterReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c77a803fcbc0c059, []int{0}
+}
+
+func (m *RegisterReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RegisterReq.Unmarshal(m, b)
+}
+func (m *RegisterReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RegisterReq.Marshal(b, m, deterministic)
+}
+func (m *RegisterReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegisterReq.Merge(m, src)
+}
+func (m *RegisterReq) XXX_Size() int {
+	return xxx_messageInfo_RegisterReq.Size(m)
+}
+func (m *RegisterReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegisterReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegisterReq proto.InternalMessageInfo
+
+func (m *RegisterReq) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+type RegisterResp struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RegisterResp) Reset()         { *m = RegisterResp{} }
+func (m *RegisterResp) String() string { return proto.CompactTextString(m) }
+func (*RegisterResp) ProtoMessage()    {}
+func (*RegisterResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c77a803fcbc0c059, []int{1}
+}
+
+func (m *RegisterResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RegisterResp.Unmarshal(m, b)
+}
+func (m *RegisterResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RegisterResp.Marshal(b, m, deterministic)
+}
+func (m *RegisterResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegisterResp.Merge(m, src)
+}
+func (m *RegisterResp) XXX_Size() int {
+	return xxx_messageInfo_RegisterResp.Size(m)
+}
+func (m *RegisterResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegisterResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegisterResp proto.InternalMessageInfo
+
+type UnregisterReq struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UnregisterReq) Reset()         { *m = UnregisterReq{} }
+func (m *UnregisterReq) String() string { return proto.CompactTextString(m) }
+func (*UnregisterReq) ProtoMessage()    {}
+func (*UnregisterReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c77a803fcbc0c059, []int{2}
+}
+
+func (m *UnregisterReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnregisterReq.Unmarshal(m, b)
+}
+func (m *UnregisterReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnregisterReq.Marshal(b, m, deterministic)
+}
+func (m *UnregisterReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnregisterReq.Merge(m, src)
+}
+func (m *UnregisterReq) XXX_Size() int {
+	return xxx_messageInfo_UnregisterReq.Size(m)
+}
+func (m *UnregisterReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnregisterReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnregisterReq proto.InternalMessageInfo
+
+func (m *UnregisterReq) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+type UnregisterResp struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UnregisterResp) Reset()         { *m = UnregisterResp{} }
+func (m *UnregisterResp) String() string { return proto.CompactTextString(m) }
+func (*UnregisterResp) ProtoMessage()    {}
+func (*UnregisterResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c77a803fcbc0c059, []int{3}
+}
+
+func (m *UnregisterResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnregisterResp.Unmarshal(m, b)
+}
+func (m *UnregisterResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnregisterResp.Marshal(b, m, deterministic)
+}
+func (m *UnregisterResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnregisterResp.Merge(m, src)
+}
+func (m *UnregisterResp) XXX_Size() int {
+	return xxx_messageInfo_UnregisterResp.Size(m)
+}
+func (m *UnregisterResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnregisterResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnregisterResp proto.InternalMessageInfo
+
 type SubidAllocReq struct {
 	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Size                 uint64   `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
@@ -36,7 +174,7 @@ func (m *SubidAllocReq) Reset()         { *m = SubidAllocReq{} }
 func (m *SubidAllocReq) String() string { return proto.CompactTextString(m) }
 func (*SubidAllocReq) ProtoMessage()    {}
 func (*SubidAllocReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{0}
+	return fileDescriptor_c77a803fcbc0c059, []int{4}
 }
 
 func (m *SubidAllocReq) XXX_Unmarshal(b []byte) error {
@@ -83,7 +221,7 @@ func (m *SubidAllocResp) Reset()         { *m = SubidAllocResp{} }
 func (m *SubidAllocResp) String() string { return proto.CompactTextString(m) }
 func (*SubidAllocResp) ProtoMessage()    {}
 func (*SubidAllocResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{1}
+	return fileDescriptor_c77a803fcbc0c059, []int{5}
 }
 
 func (m *SubidAllocResp) XXX_Unmarshal(b []byte) error {
@@ -118,76 +256,6 @@ func (m *SubidAllocResp) GetGid() uint32 {
 	return 0
 }
 
-type SubidFreeReq struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SubidFreeReq) Reset()         { *m = SubidFreeReq{} }
-func (m *SubidFreeReq) String() string { return proto.CompactTextString(m) }
-func (*SubidFreeReq) ProtoMessage()    {}
-func (*SubidFreeReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{2}
-}
-
-func (m *SubidFreeReq) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SubidFreeReq.Unmarshal(m, b)
-}
-func (m *SubidFreeReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SubidFreeReq.Marshal(b, m, deterministic)
-}
-func (m *SubidFreeReq) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubidFreeReq.Merge(m, src)
-}
-func (m *SubidFreeReq) XXX_Size() int {
-	return xxx_messageInfo_SubidFreeReq.Size(m)
-}
-func (m *SubidFreeReq) XXX_DiscardUnknown() {
-	xxx_messageInfo_SubidFreeReq.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SubidFreeReq proto.InternalMessageInfo
-
-func (m *SubidFreeReq) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-type SubidFreeResp struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SubidFreeResp) Reset()         { *m = SubidFreeResp{} }
-func (m *SubidFreeResp) String() string { return proto.CompactTextString(m) }
-func (*SubidFreeResp) ProtoMessage()    {}
-func (*SubidFreeResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{3}
-}
-
-func (m *SubidFreeResp) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SubidFreeResp.Unmarshal(m, b)
-}
-func (m *SubidFreeResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SubidFreeResp.Marshal(b, m, deterministic)
-}
-func (m *SubidFreeResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubidFreeResp.Merge(m, src)
-}
-func (m *SubidFreeResp) XXX_Size() int {
-	return xxx_messageInfo_SubidFreeResp.Size(m)
-}
-func (m *SubidFreeResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_SubidFreeResp.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SubidFreeResp proto.InternalMessageInfo
-
 type Mount struct {
 	Source               string   `protobuf:"bytes,1,opt,name=source,proto3" json:"source,omitempty"`
 	Dest                 string   `protobuf:"bytes,2,opt,name=dest,proto3" json:"dest,omitempty"`
@@ -202,7 +270,7 @@ func (m *Mount) Reset()         { *m = Mount{} }
 func (m *Mount) String() string { return proto.CompactTextString(m) }
 func (*Mount) ProtoMessage()    {}
 func (*Mount) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{4}
+	return fileDescriptor_c77a803fcbc0c059, []int{6}
 }
 
 func (m *Mount) XXX_Unmarshal(b []byte) error {
@@ -266,7 +334,7 @@ func (m *SupMountsReq) Reset()         { *m = SupMountsReq{} }
 func (m *SupMountsReq) String() string { return proto.CompactTextString(m) }
 func (*SupMountsReq) ProtoMessage()    {}
 func (*SupMountsReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{5}
+	return fileDescriptor_c77a803fcbc0c059, []int{7}
 }
 
 func (m *SupMountsReq) XXX_Unmarshal(b []byte) error {
@@ -333,7 +401,7 @@ func (m *SupMountsReqResp) Reset()         { *m = SupMountsReqResp{} }
 func (m *SupMountsReqResp) String() string { return proto.CompactTextString(m) }
 func (*SupMountsReqResp) ProtoMessage()    {}
 func (*SupMountsReqResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{6}
+	return fileDescriptor_c77a803fcbc0c059, []int{8}
 }
 
 func (m *SupMountsReqResp) XXX_Unmarshal(b []byte) error {
@@ -361,117 +429,48 @@ func (m *SupMountsReqResp) GetMounts() []*Mount {
 	return nil
 }
 
-type SupMountsRel struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SupMountsRel) Reset()         { *m = SupMountsRel{} }
-func (m *SupMountsRel) String() string { return proto.CompactTextString(m) }
-func (*SupMountsRel) ProtoMessage()    {}
-func (*SupMountsRel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{7}
-}
-
-func (m *SupMountsRel) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SupMountsRel.Unmarshal(m, b)
-}
-func (m *SupMountsRel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SupMountsRel.Marshal(b, m, deterministic)
-}
-func (m *SupMountsRel) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SupMountsRel.Merge(m, src)
-}
-func (m *SupMountsRel) XXX_Size() int {
-	return xxx_messageInfo_SupMountsRel.Size(m)
-}
-func (m *SupMountsRel) XXX_DiscardUnknown() {
-	xxx_messageInfo_SupMountsRel.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SupMountsRel proto.InternalMessageInfo
-
-func (m *SupMountsRel) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-type SupMountsRelResp struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SupMountsRelResp) Reset()         { *m = SupMountsRelResp{} }
-func (m *SupMountsRelResp) String() string { return proto.CompactTextString(m) }
-func (*SupMountsRelResp) ProtoMessage()    {}
-func (*SupMountsRelResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c77a803fcbc0c059, []int{8}
-}
-
-func (m *SupMountsRelResp) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SupMountsRelResp.Unmarshal(m, b)
-}
-func (m *SupMountsRelResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SupMountsRelResp.Marshal(b, m, deterministic)
-}
-func (m *SupMountsRelResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SupMountsRelResp.Merge(m, src)
-}
-func (m *SupMountsRelResp) XXX_Size() int {
-	return xxx_messageInfo_SupMountsRelResp.Size(m)
-}
-func (m *SupMountsRelResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_SupMountsRelResp.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SupMountsRelResp proto.InternalMessageInfo
-
 func init() {
+	proto.RegisterType((*RegisterReq)(nil), "protobuf.RegisterReq")
+	proto.RegisterType((*RegisterResp)(nil), "protobuf.RegisterResp")
+	proto.RegisterType((*UnregisterReq)(nil), "protobuf.UnregisterReq")
+	proto.RegisterType((*UnregisterResp)(nil), "protobuf.UnregisterResp")
 	proto.RegisterType((*SubidAllocReq)(nil), "protobuf.SubidAllocReq")
 	proto.RegisterType((*SubidAllocResp)(nil), "protobuf.SubidAllocResp")
-	proto.RegisterType((*SubidFreeReq)(nil), "protobuf.SubidFreeReq")
-	proto.RegisterType((*SubidFreeResp)(nil), "protobuf.SubidFreeResp")
 	proto.RegisterType((*Mount)(nil), "protobuf.Mount")
 	proto.RegisterType((*SupMountsReq)(nil), "protobuf.SupMountsReq")
 	proto.RegisterType((*SupMountsReqResp)(nil), "protobuf.SupMountsReqResp")
-	proto.RegisterType((*SupMountsRel)(nil), "protobuf.SupMountsRel")
-	proto.RegisterType((*SupMountsRelResp)(nil), "protobuf.SupMountsRelResp")
 }
 
 func init() { proto.RegisterFile("protobuf.proto", fileDescriptor_c77a803fcbc0c059) }
 
 var fileDescriptor_c77a803fcbc0c059 = []byte{
-	// 398 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x53, 0x4d, 0x8f, 0xda, 0x30,
-	0x10, 0x6d, 0x3e, 0x36, 0xda, 0x4c, 0x17, 0x76, 0xe5, 0x03, 0xa4, 0x51, 0x55, 0x45, 0xbe, 0x6c,
-	0x4e, 0x39, 0x40, 0x6f, 0x95, 0x2a, 0x41, 0xab, 0xde, 0x90, 0x2a, 0xa3, 0x1e, 0x7a, 0x04, 0x62,
-	0xc0, 0x92, 0x8b, 0x4d, 0xec, 0x54, 0xa5, 0xbf, 0xa8, 0x3f, 0xb3, 0xb2, 0x63, 0x12, 0x28, 0xa9,
-	0xf6, 0xf6, 0xfc, 0x66, 0xde, 0x9b, 0xaf, 0x04, 0x86, 0xb2, 0x12, 0x5a, 0xac, 0xeb, 0x6d, 0x61,
-	0x01, 0xba, 0x3f, 0xbf, 0xf1, 0x14, 0x06, 0xcb, 0x7a, 0xcd, 0xca, 0x19, 0xe7, 0x62, 0x43, 0xe8,
-	0x11, 0x0d, 0xc1, 0x67, 0x65, 0xe2, 0x65, 0x5e, 0x1e, 0x13, 0x9f, 0x95, 0x08, 0x41, 0xa8, 0xd8,
-	0x6f, 0x9a, 0xf8, 0x99, 0x97, 0x87, 0xc4, 0x62, 0xfc, 0x1e, 0x86, 0x97, 0x22, 0x25, 0xd1, 0x13,
-	0x04, 0xb5, 0x93, 0x0d, 0x88, 0x81, 0x86, 0xd9, 0xb1, 0xd2, 0xca, 0x06, 0xc4, 0x40, 0xfc, 0x0e,
-	0x1e, 0xac, 0xea, 0x4b, 0x45, 0x69, 0x4f, 0x25, 0xfc, 0xe8, 0x5a, 0x69, 0xe2, 0x4a, 0xe2, 0xef,
-	0x70, 0xb7, 0x10, 0xf5, 0x41, 0xa3, 0x11, 0x44, 0x4a, 0xd4, 0xd5, 0x86, 0xba, 0x6c, 0xf7, 0x32,
-	0xbd, 0x95, 0x54, 0x69, 0x5b, 0x24, 0x26, 0x16, 0x1b, 0x4e, 0x9f, 0x24, 0x4d, 0x82, 0x86, 0x33,
-	0xd8, 0xf4, 0x22, 0xa4, 0x4e, 0xc2, 0x2c, 0xc8, 0x63, 0x62, 0x20, 0xfe, 0x65, 0x7a, 0x91, 0xd6,
-	0x5d, 0xf5, 0x4d, 0x3d, 0x82, 0xa8, 0x12, 0x42, 0x6f, 0x95, 0xf3, 0x76, 0xaf, 0xf3, 0x9c, 0xc1,
-	0xcd, 0x9c, 0x61, 0x3b, 0x27, 0x7a, 0x0b, 0xb1, 0xda, 0xb3, 0xad, 0xfe, 0xc6, 0x4a, 0x95, 0xdc,
-	0x65, 0x5e, 0x7e, 0x4f, 0x3a, 0x02, 0x7f, 0x80, 0xa7, 0xcb, 0xca, 0x76, 0x7b, 0xcf, 0x10, 0xfd,
-	0xb0, 0x44, 0xe2, 0x65, 0x41, 0xfe, 0x7a, 0xf2, 0x58, 0xb4, 0xf7, 0xb2, 0x89, 0xc4, 0x85, 0x9b,
-	0x15, 0xb6, 0x62, 0x7e, 0xb3, 0x42, 0x74, 0x65, 0xce, 0x8d, 0xf9, 0xe4, 0x8f, 0x0f, 0x63, 0x75,
-	0x52, 0x3f, 0x99, 0x12, 0xd5, 0x62, 0x57, 0x2d, 0xf5, 0x4a, 0xd3, 0x4f, 0xfb, 0xd5, 0xe1, 0x40,
-	0x39, 0x9a, 0x01, 0x74, 0x87, 0x44, 0xe3, 0xae, 0xec, 0xd5, 0x37, 0x91, 0x26, 0xfd, 0x01, 0x25,
-	0xf1, 0x2b, 0xf4, 0x11, 0xe2, 0xf6, 0x6a, 0x68, 0xf4, 0x4f, 0xa2, 0x3b, 0x75, 0x3a, 0xee, 0xe5,
-	0xad, 0xfe, 0x33, 0x3c, 0x10, 0x7a, 0x6c, 0xbb, 0xbe, 0xb6, 0xe8, 0xf6, 0x94, 0xa6, 0xfd, 0xfc,
-	0xa5, 0x0b, 0x7f, 0xc9, 0x85, 0xff, 0xc7, 0x85, 0x37, 0x2e, 0xf3, 0x67, 0x78, 0xc3, 0x44, 0xb1,
-	0xab, 0xe4, 0xa6, 0x38, 0x6f, 0xac, 0xcd, 0x9f, 0xb7, 0xff, 0xcc, 0x57, 0x6f, 0x1d, 0x59, 0x3c,
-	0xfd, 0x1b, 0x00, 0x00, 0xff, 0xff, 0x40, 0x89, 0x07, 0x52, 0x58, 0x03, 0x00, 0x00,
+	// 405 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x53, 0x3d, 0x6f, 0xdb, 0x30,
+	0x10, 0x8d, 0x3e, 0x22, 0x58, 0x97, 0x48, 0x35, 0x08, 0x54, 0x51, 0x85, 0x16, 0x15, 0xb8, 0x44,
+	0x93, 0x86, 0xa4, 0x5b, 0xa6, 0xa4, 0x5d, 0x03, 0x14, 0x34, 0x32, 0x74, 0x8c, 0x2d, 0x5a, 0x26,
+	0xe0, 0x8a, 0x34, 0x49, 0x15, 0x75, 0x7f, 0x4e, 0x7f, 0x69, 0x41, 0x5a, 0x5f, 0x46, 0x85, 0x6c,
+	0x8f, 0xef, 0xee, 0xbd, 0x3b, 0xdd, 0x9d, 0x20, 0x16, 0x92, 0x6b, 0xbe, 0x6e, 0xb7, 0xa5, 0x05,
+	0x68, 0xd1, 0xbf, 0xf1, 0x27, 0xb8, 0x22, 0xb4, 0x66, 0x4a, 0x53, 0x49, 0xe8, 0x01, 0xc5, 0xe0,
+	0xb2, 0x2a, 0x75, 0x72, 0xa7, 0x08, 0x89, 0xcb, 0x2a, 0x1c, 0xc3, 0xf5, 0x18, 0x56, 0x02, 0x7f,
+	0x86, 0xe8, 0xa5, 0x91, 0x6f, 0x08, 0x96, 0x10, 0x4f, 0x13, 0x94, 0xc0, 0xf7, 0x10, 0xad, 0xda,
+	0x35, 0xab, 0x1e, 0xf7, 0x7b, 0xbe, 0x99, 0x91, 0x20, 0x04, 0xbe, 0x62, 0x7f, 0x68, 0xea, 0xe6,
+	0x4e, 0xe1, 0x13, 0x8b, 0xf1, 0x17, 0x88, 0xa7, 0x22, 0x25, 0xd0, 0x12, 0xbc, 0xb6, 0x93, 0x45,
+	0xc4, 0x40, 0xc3, 0xd4, 0xac, 0xb2, 0xb2, 0x88, 0x18, 0x88, 0x7f, 0xc0, 0xe5, 0x33, 0x6f, 0x1b,
+	0x8d, 0x12, 0x08, 0x14, 0x6f, 0xe5, 0x86, 0x76, 0x65, 0xba, 0x97, 0x29, 0x55, 0x51, 0xa5, 0xad,
+	0x26, 0x24, 0x16, 0x1b, 0x4e, 0x1f, 0x05, 0x4d, 0xbd, 0x13, 0x67, 0xb0, 0xb1, 0xe6, 0x42, 0xa7,
+	0x7e, 0xee, 0x15, 0x21, 0x31, 0x10, 0xff, 0x86, 0xeb, 0x55, 0x2b, 0xac, 0xbb, 0x9a, 0xfb, 0x88,
+	0x04, 0x02, 0xc9, 0xb9, 0xde, 0xaa, 0xce, 0xbb, 0x7b, 0xf5, 0x6d, 0x7b, 0xff, 0xb5, 0xed, 0x0f,
+	0x6d, 0xa3, 0x8f, 0x10, 0xaa, 0x1d, 0xdb, 0xea, 0x17, 0x56, 0xa9, 0xf4, 0x32, 0x77, 0x8a, 0x05,
+	0x19, 0x09, 0xfc, 0x00, 0xcb, 0x69, 0x65, 0x3b, 0x8c, 0x5b, 0x08, 0x7e, 0x5a, 0x22, 0x75, 0x72,
+	0xaf, 0xb8, 0xba, 0x7b, 0x57, 0x0e, 0x0b, 0xb6, 0x89, 0xa4, 0x0b, 0xdf, 0xfd, 0x75, 0xe1, 0x46,
+	0x1d, 0xd5, 0x2f, 0xa6, 0xb8, 0x7c, 0xae, 0xe5, 0x4a, 0xbf, 0x6a, 0xfa, 0x75, 0xf7, 0xda, 0x34,
+	0x74, 0x8f, 0x1e, 0x60, 0xd1, 0xef, 0x16, 0xbd, 0x1f, 0x0d, 0x26, 0xe7, 0x90, 0x25, 0x73, 0xb4,
+	0x12, 0xf8, 0x02, 0x3d, 0x02, 0x8c, 0x7b, 0x46, 0x37, 0x63, 0xde, 0xd9, 0x79, 0x64, 0xe9, 0x7c,
+	0xa0, 0xb7, 0x18, 0x77, 0x3c, 0xb5, 0x38, 0x3b, 0x97, 0xa9, 0xc5, 0xf9, 0x49, 0xe0, 0x0b, 0xf4,
+	0xcd, 0x9c, 0xe7, 0x61, 0x18, 0x0f, 0x4a, 0xa6, 0xb9, 0xe3, 0xcc, 0xb2, 0x6c, 0x9e, 0x3f, 0xb9,
+	0x3c, 0xdd, 0xc2, 0x07, 0xc6, 0xcb, 0x5a, 0x8a, 0x4d, 0xd9, 0xcf, 0x6a, 0xc8, 0x7f, 0x1a, 0x7e,
+	0x95, 0xef, 0xce, 0x3a, 0xb0, 0xf8, 0xfe, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x69, 0xfb, 0xed,
+	0xa8, 0x4f, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -486,14 +485,14 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SysvisorMgrStateChannelClient interface {
+	// Container registration
+	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
+	// Container Unregistration
+	Unregister(ctx context.Context, in *UnregisterReq, opts ...grpc.CallOption) (*UnregisterResp, error)
 	// Subuid(gid) allocation request
 	SubidAlloc(ctx context.Context, in *SubidAllocReq, opts ...grpc.CallOption) (*SubidAllocResp, error)
-	// Subuid(gid) freeing request
-	SubidFree(ctx context.Context, in *SubidFreeReq, opts ...grpc.CallOption) (*SubidFreeResp, error)
 	// Supplementary mount request
 	ReqSupMounts(ctx context.Context, in *SupMountsReq, opts ...grpc.CallOption) (*SupMountsReqResp, error)
-	// Supplementary mount release
-	RelSupMounts(ctx context.Context, in *SupMountsRel, opts ...grpc.CallOption) (*SupMountsRelResp, error)
 }
 
 type sysvisorMgrStateChannelClient struct {
@@ -504,18 +503,27 @@ func NewSysvisorMgrStateChannelClient(cc *grpc.ClientConn) SysvisorMgrStateChann
 	return &sysvisorMgrStateChannelClient{cc}
 }
 
-func (c *sysvisorMgrStateChannelClient) SubidAlloc(ctx context.Context, in *SubidAllocReq, opts ...grpc.CallOption) (*SubidAllocResp, error) {
-	out := new(SubidAllocResp)
-	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/SubidAlloc", in, out, opts...)
+func (c *sysvisorMgrStateChannelClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	out := new(RegisterResp)
+	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *sysvisorMgrStateChannelClient) SubidFree(ctx context.Context, in *SubidFreeReq, opts ...grpc.CallOption) (*SubidFreeResp, error) {
-	out := new(SubidFreeResp)
-	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/SubidFree", in, out, opts...)
+func (c *sysvisorMgrStateChannelClient) Unregister(ctx context.Context, in *UnregisterReq, opts ...grpc.CallOption) (*UnregisterResp, error) {
+	out := new(UnregisterResp)
+	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/Unregister", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sysvisorMgrStateChannelClient) SubidAlloc(ctx context.Context, in *SubidAllocReq, opts ...grpc.CallOption) (*SubidAllocResp, error) {
+	out := new(SubidAllocResp)
+	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/SubidAlloc", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -531,46 +539,56 @@ func (c *sysvisorMgrStateChannelClient) ReqSupMounts(ctx context.Context, in *Su
 	return out, nil
 }
 
-func (c *sysvisorMgrStateChannelClient) RelSupMounts(ctx context.Context, in *SupMountsRel, opts ...grpc.CallOption) (*SupMountsRelResp, error) {
-	out := new(SupMountsRelResp)
-	err := c.cc.Invoke(ctx, "/protobuf.sysvisorMgrStateChannel/RelSupMounts", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // SysvisorMgrStateChannelServer is the server API for SysvisorMgrStateChannel service.
 type SysvisorMgrStateChannelServer interface {
+	// Container registration
+	Register(context.Context, *RegisterReq) (*RegisterResp, error)
+	// Container Unregistration
+	Unregister(context.Context, *UnregisterReq) (*UnregisterResp, error)
 	// Subuid(gid) allocation request
 	SubidAlloc(context.Context, *SubidAllocReq) (*SubidAllocResp, error)
-	// Subuid(gid) freeing request
-	SubidFree(context.Context, *SubidFreeReq) (*SubidFreeResp, error)
 	// Supplementary mount request
 	ReqSupMounts(context.Context, *SupMountsReq) (*SupMountsReqResp, error)
-	// Supplementary mount release
-	RelSupMounts(context.Context, *SupMountsRel) (*SupMountsRelResp, error)
-}
-
-// UnimplementedSysvisorMgrStateChannelServer can be embedded to have forward compatible implementations.
-type UnimplementedSysvisorMgrStateChannelServer struct {
-}
-
-func (*UnimplementedSysvisorMgrStateChannelServer) SubidAlloc(ctx context.Context, req *SubidAllocReq) (*SubidAllocResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubidAlloc not implemented")
-}
-func (*UnimplementedSysvisorMgrStateChannelServer) SubidFree(ctx context.Context, req *SubidFreeReq) (*SubidFreeResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubidFree not implemented")
-}
-func (*UnimplementedSysvisorMgrStateChannelServer) ReqSupMounts(ctx context.Context, req *SupMountsReq) (*SupMountsReqResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReqSupMounts not implemented")
-}
-func (*UnimplementedSysvisorMgrStateChannelServer) RelSupMounts(ctx context.Context, req *SupMountsRel) (*SupMountsRelResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RelSupMounts not implemented")
 }
 
 func RegisterSysvisorMgrStateChannelServer(s *grpc.Server, srv SysvisorMgrStateChannelServer) {
 	s.RegisterService(&_SysvisorMgrStateChannel_serviceDesc, srv)
+}
+
+func _SysvisorMgrStateChannel_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SysvisorMgrStateChannelServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protobuf.sysvisorMgrStateChannel/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SysvisorMgrStateChannelServer).Register(ctx, req.(*RegisterReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SysvisorMgrStateChannel_Unregister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnregisterReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SysvisorMgrStateChannelServer).Unregister(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protobuf.sysvisorMgrStateChannel/Unregister",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SysvisorMgrStateChannelServer).Unregister(ctx, req.(*UnregisterReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _SysvisorMgrStateChannel_SubidAlloc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -587,24 +605,6 @@ func _SysvisorMgrStateChannel_SubidAlloc_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SysvisorMgrStateChannelServer).SubidAlloc(ctx, req.(*SubidAllocReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SysvisorMgrStateChannel_SubidFree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubidFreeReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SysvisorMgrStateChannelServer).SubidFree(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protobuf.sysvisorMgrStateChannel/SubidFree",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SysvisorMgrStateChannelServer).SubidFree(ctx, req.(*SubidFreeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -627,43 +627,25 @@ func _SysvisorMgrStateChannel_ReqSupMounts_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SysvisorMgrStateChannel_RelSupMounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SupMountsRel)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SysvisorMgrStateChannelServer).RelSupMounts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protobuf.sysvisorMgrStateChannel/RelSupMounts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SysvisorMgrStateChannelServer).RelSupMounts(ctx, req.(*SupMountsRel))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _SysvisorMgrStateChannel_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "protobuf.sysvisorMgrStateChannel",
 	HandlerType: (*SysvisorMgrStateChannelServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Register",
+			Handler:    _SysvisorMgrStateChannel_Register_Handler,
+		},
+		{
+			MethodName: "Unregister",
+			Handler:    _SysvisorMgrStateChannel_Unregister_Handler,
+		},
+		{
 			MethodName: "SubidAlloc",
 			Handler:    _SysvisorMgrStateChannel_SubidAlloc_Handler,
 		},
 		{
-			MethodName: "SubidFree",
-			Handler:    _SysvisorMgrStateChannel_SubidFree_Handler,
-		},
-		{
 			MethodName: "ReqSupMounts",
 			Handler:    _SysvisorMgrStateChannel_ReqSupMounts_Handler,
-		},
-		{
-			MethodName: "RelSupMounts",
-			Handler:    _SysvisorMgrStateChannel_RelSupMounts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

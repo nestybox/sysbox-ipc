@@ -9,8 +9,6 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -259,20 +257,6 @@ type SysvisorStateChannelServer interface {
 	ContainerUnregistration(context.Context, *ContainerData) (*Response, error)
 	// Generates a container-update message
 	ContainerUpdate(context.Context, *ContainerData) (*Response, error)
-}
-
-// UnimplementedSysvisorStateChannelServer can be embedded to have forward compatible implementations.
-type UnimplementedSysvisorStateChannelServer struct {
-}
-
-func (*UnimplementedSysvisorStateChannelServer) ContainerRegistration(ctx context.Context, req *ContainerData) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ContainerRegistration not implemented")
-}
-func (*UnimplementedSysvisorStateChannelServer) ContainerUnregistration(ctx context.Context, req *ContainerData) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ContainerUnregistration not implemented")
-}
-func (*UnimplementedSysvisorStateChannelServer) ContainerUpdate(ctx context.Context, req *ContainerData) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ContainerUpdate not implemented")
 }
 
 func RegisterSysvisorStateChannelServer(s *grpc.Server, srv SysvisorStateChannelServer) {
