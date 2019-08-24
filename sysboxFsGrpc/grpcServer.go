@@ -1,4 +1,4 @@
-package sysvisorFsGrpc
+package sysboxFsGrpc
 
 import (
 	"context"
@@ -6,21 +6,21 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/nestybox/sysvisor-ipc/sysvisorFsGrpc/protobuf"
+	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/protobuf"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 //
-// File dealing with all the logic related to Sysvisorfs' external-communication
+// File dealing with all the logic related to sysbox-fs' external-communication
 // (ipc) logic.
 //
 
 
 const (
-      sysvisorFsPort = ":50052"
-      sysvisorFsAddress = "localhost" + sysvisorFsPort
+      sysboxFsPort = ":50052"
+      sysboxFsAddress = "localhost" + sysboxFsPort
 )
 
 
@@ -71,7 +71,7 @@ func NewServer(ctx interface{}, cb *CallbacksMap) *Server {
 func (s *Server) Init() {
 
 	// TODO: Change me to unix-socket instead: more secure/efficient.
-	lis, err := net.Listen("tcp", sysvisorFsPort)
+	lis, err := net.Listen("tcp", sysboxFsPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -79,7 +79,7 @@ func (s *Server) Init() {
 	// Initializing grpc server
 	grpcServer := grpc.NewServer()
 
-	pb.RegisterSysvisorStateChannelServer(grpcServer, s)
+	pb.RegisterSysboxStateChannelServer(grpcServer, s)
 
 	// Register reflection service on gRPC server.
 	reflection.Register(grpcServer)

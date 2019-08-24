@@ -1,6 +1,6 @@
-// Server-side gRPC interface for the sysvisor manager daemon
+// Server-side gRPC interface for the sysbox manager daemon
 
-package sysvisorMgrGrpc
+package sysboxMgrGrpc
 
 import (
 	"context"
@@ -9,13 +9,13 @@ import (
 	"net"
 	"os"
 
-	pb "github.com/nestybox/sysvisor-ipc/sysvisorMgrGrpc/protobuf"
+	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-const grpcSockAddr = "/run/sysvisor/sysmgr.sock"
+const grpcSockAddr = "/run/sysboxd/sysmgr.sock"
 
 type ServerCallbacks struct {
 	Register     func(id string) error
@@ -54,7 +54,7 @@ func (s *ServerStub) Init() error {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterSysvisorMgrStateChannelServer(grpcServer, s)
+	pb.RegisterSysboxMgrStateChannelServer(grpcServer, s)
 	reflection.Register(grpcServer)
 
 	if err := grpcServer.Serve(lis); err != nil {

@@ -1,4 +1,4 @@
-module github.com/nestybox/sysvisor-ipc
+module github.com/nestybox/sysbox-ipc
 
 go 1.13
 

@@ -1,6 +1,6 @@
-// Client-side gRPC interface for the sysvisor manager daemon
+// Client-side gRPC interface for the sysbox manager daemon
 
-package sysvisorMgrGrpc
+package sysboxMgrGrpc
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"net"
 	"time"
 
-	pb "github.com/nestybox/sysvisor-ipc/sysvisorMgrGrpc/protobuf"
+	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
 	"google.golang.org/grpc"
 )
 
@@ -18,7 +18,7 @@ func unixConnect(addr string, t time.Duration) (net.Conn, error) {
 	return conn, err
 }
 
-// connect establishes grpc connection to the sysvisorMgr daemon.
+// connect establishes grpc connection to the sysbox-mgr daemon.
 func connect() (*grpc.ClientConn, error) {
 	conn, err := grpc.Dial(grpcSockAddr, grpc.WithInsecure(), grpc.WithDialer(unixConnect))
 	if err != nil {
@@ -27,15 +27,15 @@ func connect() (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
-// Registers a container with sysvisor-mgr
+// Registers a container with sysbox-mgr
 func Register(id string) error {
 	conn, err := connect()
 	if err != nil {
-		return fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
 	}
 	defer conn.Close()
 
-	ch := pb.NewSysvisorMgrStateChannelClient(conn)
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -51,15 +51,15 @@ func Register(id string) error {
 	return nil
 }
 
-// Unregisters a container with sysvisor-mgr
+// Unregisters a container with sysbox-mgr
 func Unregister(id string) error {
 	conn, err := connect()
 	if err != nil {
-		return fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
 	}
 	defer conn.Close()
 
-	ch := pb.NewSysvisorMgrStateChannelClient(conn)
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -75,15 +75,15 @@ func Unregister(id string) error {
 	return nil
 }
 
-// SubidAlloc requests sysvisor-mgr to allocate a range of 'size' subuids and subgids.
+// SubidAlloc requests sysbox-mgr to allocate a range of 'size' subuids and subgids.
 func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	conn, err := connect()
 	if err != nil {
-		return 0, 0, fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
+		return 0, 0, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
 	}
 	defer conn.Close()
 
-	ch := pb.NewSysvisorMgrStateChannelClient(conn)
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -100,19 +100,19 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	return resp.Uid, resp.Gid, err
 }
 
-// ReqSupMounts requests sysvisor-mgr for supplementary mount configs for the container
+// ReqSupMounts requests sysbox-mgr for supplementary mount configs for the container
 // 'id' is the containers id
 // 'rootfs' is the abs path to the container's rootfs
 // 'uid' and 'gid' are the uid and gid of the container's root on the host
-// 'shiftUids' indicates if sysvisor-runc is using uid-shifting for the container.
+// 'shiftUids' indicates if sysbox-runc is using uid-shifting for the container.
 func ReqSupMounts(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error) {
 	conn, err := connect()
 	if err != nil {
-		return []*pb.Mount{}, fmt.Errorf("failed to connect with sysvisor-mgr: %v", err)
+		return []*pb.Mount{}, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
 	}
 	defer conn.Close()
 
-	ch := pb.NewSysvisorMgrStateChannelClient(conn)
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 

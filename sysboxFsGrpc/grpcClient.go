@@ -1,4 +1,4 @@
-package sysvisorFsGrpc
+package sysboxFsGrpc
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
-	pb "github.com/nestybox/sysvisor-ipc/sysvisorFsGrpc/protobuf"
+	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/protobuf"
 	"google.golang.org/grpc"
 )
 
@@ -24,15 +24,15 @@ type ContainerData struct {
 }
 
 //
-// Establishes grpc connection to sysvisor-fs' remote-end.
+// Establishes grpc connection to sysbox-fs' remote-end.
 //
 func connect() *grpc.ClientConn {
 
 	// Set up a connection to the server.
 	// TODO: Secure me through TLS.
-	conn, err := grpc.Dial(sysvisorFsAddress, grpc.WithInsecure())
+	conn, err := grpc.Dial(sysboxFsAddress, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Could not connect to Sysvisorfs: %v", err)
+		log.Fatalf("Could not connect to sysbox-fs: %v", err)
 		return nil
 	}
 
@@ -74,21 +74,21 @@ func pbDatatoContainerData(pbdata *pb.ContainerData) (*ContainerData, error) {
 }
 
 //
-// Registers container creation in sysvisor-fs. Notice that this
+// Registers container creation in sysbox-fs. Notice that this
 // is a blocking call that can potentially have a minor impact
 // on container's boot-up speed.
 //
 func SendContainerRegistration(data *ContainerData) (err error) {
 	var pbData *pb.ContainerData
 
-	// Set up sysvisorfs pipeline.
+	// Set up sysbox-fs pipeline.
 	conn := connect()
 	if conn == nil {
-		return fmt.Errorf("failed to connect with sysvisor-fs")
+		return fmt.Errorf("failed to connect with sysbox-fs")
 	}
 	defer conn.Close()
 
-	cntrChanIntf := pb.NewSysvisorStateChannelClient(conn)
+	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -100,26 +100,26 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 
 	_, err = cntrChanIntf.ContainerRegistration(ctx, pbData)
 	if err != nil {
-		return fmt.Errorf("failed to register container with sysvisor-fs: %v", err)
+		return fmt.Errorf("failed to register container with sysbox-fs: %v", err)
 	}
 
 	return nil
 }
 
 //
-// Unregisters container from Sysvisorfs.
+// Unregisters container from sysbox-fs.
 //
 func SendContainerUnregistration(data *ContainerData) (err error) {
 	var pbData *pb.ContainerData
 
-	// Set up sysvisorfs pipeline.
+	// Set up sysbox-fs pipeline.
 	conn := connect()
 	if conn == nil {
-		return fmt.Errorf("failed to connect with sysvisor-fs")
+		return fmt.Errorf("failed to connect with sysbox-fs")
 	}
 	defer conn.Close()
 
-	cntrChanIntf := pb.NewSysvisorStateChannelClient(conn)
+	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -131,14 +131,14 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 
 	_, err = cntrChanIntf.ContainerUnregistration(ctx, pbData)
 	if err != nil {
-		return fmt.Errorf("failed to unregister container with sysvisor-fs: %v", err)
+		return fmt.Errorf("failed to unregister container with sysbox-fs: %v", err)
 	}
 
 	return nil
 }
 
 //
-// Sends a container-update message to sysvisor-fs end. At this point, we are
+// Sends a container-update message to sysbox-fs end. At this point, we are
 // only utilizing this message for a particular case, update the container
 // creation-time attribute, but this function can serve more general purposes
 // in the future.
@@ -146,14 +146,14 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 func SendContainerUpdate(data *ContainerData) (err error) {
 	var pbData *pb.ContainerData
 
-	// Set up sysvisorfs pipeline.
+	// Set up sysbox-fs pipeline.
 	conn := connect()
 	if conn == nil {
-		return fmt.Errorf("failed to connect with sysvisor-fs")
+		return fmt.Errorf("failed to connect with sysbox-fs")
 	}
 	defer conn.Close()
 
-	cntrChanIntf := pb.NewSysvisorStateChannelClient(conn)
+	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -166,7 +166,7 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 	_, err = cntrChanIntf.ContainerUpdate(ctx, pbData)
 	if err != nil {
 		return fmt.Errorf("failed to send container-update message to ",
-			"sysvisor-fs: %v", err)
+			"sysbox-fs: %v", err)
 	}
 
 	return nil

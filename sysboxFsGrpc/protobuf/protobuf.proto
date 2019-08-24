@@ -1,11 +1,11 @@
 //
-// Sysvisor-fs Protobuffer Definitions.
+// Sysbox-fs Protobuffer Definitions.
 //
 
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.grpc.sysvisor.protobuf";
+option java_package = "io.grpc.sysbox.protobuf";
 option java_outer_classname = "protobuf";
 
 import "google/protobuf/timestamp.proto";
@@ -13,7 +13,7 @@ import "google/protobuf/timestamp.proto";
 package protobuf;
 
 // ContainerRegistration/Unregistration service definition.
-service sysvisorStateChannel {
+service sysboxStateChannel {
 
     // Generates a container-registration message
     rpc ContainerRegistration (ContainerData) returns (Response) {}
@@ -26,7 +26,7 @@ service sysvisorStateChannel {
 }
 
 //
-// Request message sent by runC to sysvisorfs process during container
+// Request message sent by runC to sysbox-fs process during container
 // registration, unregistration and update phases.
 //
 message ContainerData {
@@ -40,7 +40,7 @@ message ContainerData {
   int32 GidSize                   = 8;
 }
 
-// Response message sent from sysvisorfs to runC process.
+// Response message sent from sysbox-fs to runC process.
 message Response {
   bool Success = 1;
 }

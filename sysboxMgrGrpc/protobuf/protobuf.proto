@@ -1,19 +1,19 @@
 //
-// SysvisorMgr Protobuffer Definitions.
+// SysboxMgr Protobuffer Definitions.
 //
 
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.grpc.sysvisor.protobuf";
+option java_package = "io.grpc.sysbox.protobuf";
 option java_outer_classname = "protobuf";
 
 package protobuf;
 
 //
-// sysvisorMgr channel
+// sysboxMgr channel
 //
-service sysvisorMgrStateChannel {
+service sysboxMgrStateChannel {
 
     // Container registration
     rpc Register (RegisterReq) returns (RegisterResp) {}
