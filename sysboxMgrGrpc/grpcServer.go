@@ -19,7 +19,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const grpcSockAddr = "/run/sysboxd/sysmgr.sock"
+const grpcSockAddr = "/run/sysbox/sysmgr.sock"
 
 type ServerCallbacks struct {
 	Register     func(id string) error
