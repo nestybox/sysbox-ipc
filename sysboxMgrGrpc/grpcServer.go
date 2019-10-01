@@ -14,6 +14,7 @@ import (
 	"os"
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
+	"github.com/opencontainers/runc/libcontainer/configs"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -22,12 +23,11 @@ import (
 const grpcSockAddr = "/run/sysbox/sysmgr.sock"
 
 type ServerCallbacks struct {
-	Register     func(id string) error
-	Unregister   func(id string) error
-	SubidAlloc   func(id string, size uint64) (uint32, uint32, error)
-	SubidFree    func(id string) error
-	ReqSupMounts func(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error)
-	RelSupMounts func(id string) error
+	Register       func(id string) error
+	Unregister     func(id string) error
+	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
+	ReqSupMounts   func(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error)
+	ReqShiftfsMark func(id string, rootfs string, mounts []configs.ShiftfsMount) error
 }
 
 type ServerStub struct {
@@ -113,4 +113,23 @@ func (s *ServerStub) ReqSupMounts(ctx context.Context, req *pb.SupMountsReq) (*p
 		Mounts: mounts,
 	}, nil
 
+}
+
+func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq) (*pb.ShiftfsMarkResp, error) {
+	if req == nil {
+		return &pb.ShiftfsMarkResp{}, errors.New("invalid payload")
+	}
+
+	// Convert pb.ShiftfsMark to configs.ShiftfsMount
+	shiftfsMounts := []configs.ShiftfsMount{}
+	for _, m := range req.GetShiftfsMarks() {
+		sm := configs.ShiftfsMount{
+			Source:   m.Source,
+			Readonly: m.Readonly,
+		}
+		shiftfsMounts = append(shiftfsMounts, sm)
+	}
+
+	err := s.cb.ReqShiftfsMark(req.GetId(), req.GetRootfs(), shiftfsMounts)
+	return &pb.ShiftfsMarkResp{}, err
 }

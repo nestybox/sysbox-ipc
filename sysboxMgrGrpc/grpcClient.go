@@ -13,6 +13,7 @@ import (
 	"time"
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
+	"github.com/opencontainers/runc/libcontainer/configs"
 	"google.golang.org/grpc"
 )
 
@@ -134,4 +135,43 @@ func ReqSupMounts(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]
 	}
 
 	return resp.GetMounts(), nil
+}
+
+// ReqShiftfsMark requests sysbox-mgr to perform shiftfs marking on the container's
+// rootfs and the given list of other mountpoints.
+func ReqShiftfsMark(id string, rootfs string, mounts []configs.ShiftfsMount) error {
+
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	// convert configs.ShiftfsMount to grpc ShiftfsMark
+	shiftfsMarks := []*pb.ShiftfsMark{}
+	for _, m := range mounts {
+		sm := &pb.ShiftfsMark{
+			Source:   m.Source,
+			Readonly: m.Readonly,
+		}
+		shiftfsMarks = append(shiftfsMarks, sm)
+	}
+
+	req := &pb.ShiftfsMarkReq{
+		Id:           id,
+		Rootfs:       rootfs,
+		ShiftfsMarks: shiftfsMarks,
+	}
+
+	_, err = ch.ReqShiftfsMark(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke ReqShiftfsMark via grpc: %v", err)
+	}
+
+	return nil
+
 }

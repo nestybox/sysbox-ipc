@@ -26,6 +26,9 @@ service sysboxMgrStateChannel {
 
     // Supplementary mount request
     rpc ReqSupMounts (SupMountsReq) returns (SupMountsReqResp) {}
+
+    // Shiftfs mark request
+    rpc ReqShiftfsMark (ShiftfsMarkReq) returns (ShiftfsMarkResp) {}
 }
 
 //
@@ -81,4 +84,22 @@ message SupMountsReq {
 
 message SupMountsReqResp {
     repeated Mount mounts = 1;
+}
+
+//
+// Shiftfs mark request
+//
+
+message ShiftfsMark {
+    string source = 1;
+    bool readonly = 2;
+}
+
+message ShiftfsMarkReq {
+    string id = 1;
+    string rootfs = 2;
+    repeated ShiftfsMark shiftfsMarks = 3;
+}
+
+message ShiftfsMarkResp {
 }
