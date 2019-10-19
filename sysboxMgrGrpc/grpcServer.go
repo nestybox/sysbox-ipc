@@ -28,6 +28,7 @@ type ServerCallbacks struct {
 	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
 	ReqSupMounts   func(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error)
 	ReqShiftfsMark func(id string, rootfs string, mounts []configs.ShiftfsMount) error
+	Pause          func(id string) error
 }
 
 type ServerStub struct {
@@ -132,4 +133,12 @@ func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq)
 
 	err := s.cb.ReqShiftfsMark(req.GetId(), req.GetRootfs(), shiftfsMounts)
 	return &pb.ShiftfsMarkResp{}, err
+}
+
+func (s *ServerStub) Pause(ctx context.Context, req *pb.PauseReq) (*pb.PauseResp, error) {
+	if req == nil {
+		return &pb.PauseResp{}, errors.New("invalid payload")
+	}
+	err := s.cb.Pause(req.GetId())
+	return &pb.PauseResp{}, err
 }

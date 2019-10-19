@@ -41,7 +41,7 @@ func Register(id string) error {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &pb.RegisterReq{
@@ -65,7 +65,7 @@ func Unregister(id string) error {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &pb.UnregisterReq{
@@ -89,7 +89,7 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &pb.SubidAllocReq{
@@ -118,7 +118,7 @@ func ReqSupMounts(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &pb.SupMountsReq{
@@ -148,7 +148,7 @@ func ReqShiftfsMark(id string, rootfs string, mounts []configs.ShiftfsMount) err
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	// convert configs.ShiftfsMount to grpc ShiftfsMark
@@ -173,5 +173,29 @@ func ReqShiftfsMark(id string, rootfs string, mounts []configs.ShiftfsMount) err
 	}
 
 	return nil
+}
 
+// Pause notifies the sysbox-mgr that the container has been paused.
+// 'id' is the containers id
+func Pause(id string) error {
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &pb.PauseReq{
+		Id: id,
+	}
+
+	_, err = ch.Pause(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke Pause via grpc: %v", err)
+	}
+
+	return nil
 }

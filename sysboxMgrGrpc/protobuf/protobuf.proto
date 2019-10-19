@@ -29,6 +29,9 @@ service sysboxMgrStateChannel {
 
     // Shiftfs mark request
     rpc ReqShiftfsMark (ShiftfsMarkReq) returns (ShiftfsMarkResp) {}
+
+    // Pause request
+    rpc Pause (PauseReq) returns (PauseResp) {}
 }
 
 //
@@ -102,4 +105,15 @@ message ShiftfsMarkReq {
 }
 
 message ShiftfsMarkResp {
+}
+
+//
+// Pause request
+//
+
+message PauseReq {
+    string id = 1;
+}
+
+message PauseResp {
 }
