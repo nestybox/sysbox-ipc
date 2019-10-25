@@ -94,7 +94,7 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	pbData, err = containerDataToPbData(data)
@@ -125,7 +125,7 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	pbData, err = containerDataToPbData(data)
@@ -159,7 +159,7 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	pbData, err = containerDataToPbData(data)
