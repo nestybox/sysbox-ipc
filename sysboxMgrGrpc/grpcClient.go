@@ -81,7 +81,9 @@ func Unregister(id string) error {
 }
 
 // SubidAlloc requests sysbox-mgr to allocate a range of 'size' subuids and subgids.
-func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
+// `mode` indicates the allocation mode to be used; if empty, Sysbox's default allocation
+// mode is used.
+func SubidAlloc(id string, size uint64, mode string) (uint32, uint32, error) {
 	conn, err := connect()
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
@@ -95,6 +97,7 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	req := &pb.SubidAllocReq{
 		Id:   id,
 		Size: size,
+		Mode: mode,
 	}
 
 	resp, err := ch.SubidAlloc(ctx, req)

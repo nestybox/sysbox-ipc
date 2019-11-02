@@ -25,7 +25,7 @@ const grpcSockAddr = "/run/sysbox/sysmgr.sock"
 type ServerCallbacks struct {
 	Register       func(id string) error
 	Unregister     func(id string) error
-	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
+	SubidAlloc     func(id string, size uint64, mode string) (uint32, uint32, error)
 	ReqSupMounts   func(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error)
 	ReqShiftfsMark func(id string, rootfs string, mounts []configs.ShiftfsMount) error
 	Pause          func(id string) error
@@ -93,7 +93,7 @@ func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb
 	if req == nil {
 		return &pb.SubidAllocResp{}, errors.New("invalid payload")
 	}
-	uid, gid, err := s.cb.SubidAlloc(req.GetId(), req.GetSize())
+	uid, gid, err := s.cb.SubidAlloc(req.GetId(), req.GetSize(), req.GetMode())
 	return &pb.SubidAllocResp{
 		Uid: uid,
 		Gid: gid,
