@@ -59,7 +59,6 @@ message UnregisterResp {
 message SubidAllocReq {
     string id = 1;
     uint64 size = 2;
-    string mode = 3;
 }
 
 message SubidAllocResp {
