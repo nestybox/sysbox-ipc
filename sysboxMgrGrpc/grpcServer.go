@@ -15,6 +15,7 @@ import (
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
 	"github.com/opencontainers/runc/libcontainer/configs"
+	"github.com/opencontainers/runtime-spec/specs-go"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -23,12 +24,13 @@ import (
 const grpcSockAddr = "/run/sysbox/sysmgr.sock"
 
 type ServerCallbacks struct {
-	Register       func(id string) error
-	Unregister     func(id string) error
-	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
-	ReqSupMounts   func(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error)
-	ReqShiftfsMark func(id string, rootfs string, mounts []configs.ShiftfsMount) error
-	Pause          func(id string) error
+	Register             func(id string) error
+	Unregister           func(id string) error
+	SubidAlloc           func(id string, size uint64) (uint32, uint32, error)
+	ReqDockerStoreMount  func(id string, rootfs string, uid, gid uint32, shiftUids bool) (*specs.Mount, error)
+	PrepDockerStoreMount func(id string, path string, uid, gid uint32, shiftUids bool) error
+	ReqShiftfsMark       func(id string, rootfs string, mounts []configs.ShiftfsMount) error
+	Pause                func(id string) error
 }
 
 type ServerStub struct {
@@ -100,20 +102,35 @@ func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb
 	}, err
 }
 
-func (s *ServerStub) ReqSupMounts(ctx context.Context, req *pb.SupMountsReq) (*pb.SupMountsReqResp, error) {
+func (s *ServerStub) ReqDockerStoreMount(ctx context.Context, req *pb.DsMountReq) (*pb.DsMountResp, error) {
 	if req == nil {
-		return &pb.SupMountsReqResp{}, errors.New("invalid payload")
+		return &pb.DsMountResp{}, errors.New("invalid payload")
 	}
 
-	mounts, err := s.cb.ReqSupMounts(req.GetId(), req.GetRootfs(), req.GetUid(), req.GetGid(), req.GetShiftUids())
+	m, err := s.cb.ReqDockerStoreMount(req.GetId(), req.GetRootfs(), req.GetUid(), req.GetGid(), req.GetShiftUids())
 	if err != nil {
-		return &pb.SupMountsReqResp{}, err
+		return &pb.DsMountResp{}, err
 	}
 
-	return &pb.SupMountsReqResp{
-		Mounts: mounts,
-	}, nil
+	pbMount := &pb.Mount{
+		Source: m.Source,
+		Dest:   m.Destination,
+		Type:   m.Type,
+		Opt:    m.Options,
+	}
 
+	return &pb.DsMountResp{
+		Mount: pbMount,
+	}, nil
+}
+
+func (s *ServerStub) PrepDockerStoreMount(ctx context.Context, req *pb.DsMountPrepReq) (*pb.DsMountPrepResp, error) {
+	if req == nil {
+		return &pb.DsMountPrepResp{}, errors.New("invalid payload")
+	}
+
+	err := s.cb.PrepDockerStoreMount(req.GetId(), req.GetPath(), req.GetUid(), req.GetGid(), req.GetShiftUids())
+	return &pb.DsMountPrepResp{}, err
 }
 
 func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq) (*pb.ShiftfsMarkResp, error) {

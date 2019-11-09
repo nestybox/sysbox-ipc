@@ -105,15 +105,15 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	return resp.Uid, resp.Gid, err
 }
 
-// ReqSupMounts requests sysbox-mgr for supplementary mount configs for the container
+// ReqDockerStoreMount requests sysbox-mgr to setup a Docker Store mount
 // 'id' is the containers id
 // 'rootfs' is the abs path to the container's rootfs
-// 'uid' and 'gid' are the uid and gid of the container's root on the host
+// 'uid' and 'gid' are the uid and gid of the container's root user on the host
 // 'shiftUids' indicates if sysbox-runc is using uid-shifting for the container.
-func ReqSupMounts(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]*pb.Mount, error) {
+func ReqDockerStoreMount(id string, rootfs string, uid, gid uint32, shiftUids bool) (*pb.Mount, error) {
 	conn, err := connect()
 	if err != nil {
-		return []*pb.Mount{}, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+		return &pb.Mount{}, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
 	}
 	defer conn.Close()
 
@@ -121,7 +121,7 @@ func ReqSupMounts(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	req := &pb.SupMountsReq{
+	req := &pb.DsMountReq{
 		Id:        id,
 		Rootfs:    rootfs,
 		Uid:       uid,
@@ -129,12 +129,44 @@ func ReqSupMounts(id string, rootfs string, uid, gid uint32, shiftUids bool) ([]
 		ShiftUids: shiftUids,
 	}
 
-	resp, err := ch.ReqSupMounts(ctx, req)
+	resp, err := ch.ReqDockerStoreMount(ctx, req)
 	if err != nil {
-		return []*pb.Mount{}, fmt.Errorf("failed to invoke ReqSupMounts via grpc: %v", err)
+		return &pb.Mount{}, fmt.Errorf("failed to invoke ReqDockerStoreMount via grpc: %v", err)
 	}
 
-	return resp.GetMounts(), nil
+	return resp.GetMount(), nil
+}
+
+// PrepDockerStoreMount requests sysbox-mgr to prepare an existing Docker store mount-point for use by a sys container.
+// 'id' is the containers id
+// 'path' is the abs path to the docker-store mount source on the host.
+// 'uid' and 'gid' are the uid and gid of the container's root user on the host
+// 'shiftUids' indicates if sysbox-runc is using uid-shifting for the container.
+func PrepDockerStoreMount(id string, path string, uid, gid uint32, shiftUids bool) error {
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	req := &pb.DsMountPrepReq{
+		Id:        id,
+		Path:      path,
+		Uid:       uid,
+		Gid:       gid,
+		ShiftUids: shiftUids,
+	}
+
+	_, err = ch.PrepDockerStoreMount(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke PrepDockerStoreMount via grpc: %v", err)
+	}
+
+	return nil
 }
 
 // ReqShiftfsMark requests sysbox-mgr to perform shiftfs marking on the container's

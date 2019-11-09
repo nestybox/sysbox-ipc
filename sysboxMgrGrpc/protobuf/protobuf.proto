@@ -24,8 +24,11 @@ service sysboxMgrStateChannel {
     // Subuid(gid) allocation request
     rpc SubidAlloc (SubidAllocReq) returns (SubidAllocResp) {}
 
-    // Supplementary mount request
-    rpc ReqSupMounts (SupMountsReq) returns (SupMountsReqResp) {}
+    // Docker store mount request
+    rpc ReqDockerStoreMount (DsMountReq) returns (DsMountResp) {}
+
+    // Docker store mount prep request
+    rpc PrepDockerStoreMount (DsMountPrepReq) returns (DsMountPrepResp) {}
 
     // Shiftfs mark request
     rpc ReqShiftfsMark (ShiftfsMarkReq) returns (ShiftfsMarkResp) {}
@@ -67,17 +70,10 @@ message SubidAllocResp {
 }
 
 //
-// Supplementary mount request
+// Docker Store Mount Req
 //
 
-message Mount {
-  string source = 1;
-  string dest = 2;
-  string type = 3;
-  repeated string opt = 4;
-}
-
-message SupMountsReq {
+message DsMountReq {
     string id = 1;
     string rootfs = 2;
     uint32 uid = 3;
@@ -85,8 +81,30 @@ message SupMountsReq {
     bool shiftUids = 5;
 }
 
-message SupMountsReqResp {
-    repeated Mount mounts = 1;
+message Mount {
+    string source = 1;
+    string dest = 2;
+    string type = 3;
+    repeated string opt = 4;
+}
+
+message DsMountResp {
+    Mount mount = 1;
+}
+
+//
+// Docker Store Mount Prep Req
+//
+
+message DsMountPrepReq {
+    string id = 1;
+    string path = 2;
+    uint32 uid = 3;
+    uint32 gid = 4;
+    bool shiftUids = 5;
+}
+
+message DsMountPrepResp {
 }
 
 //
