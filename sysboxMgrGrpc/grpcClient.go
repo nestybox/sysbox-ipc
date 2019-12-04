@@ -13,7 +13,9 @@ import (
 	"time"
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
+	ipcLib "github.com/nestybox/sysbox-ipc/sysboxMgrLib"
 	"github.com/opencontainers/runc/libcontainer/configs"
+	"github.com/opencontainers/runtime-spec/specs-go"
 	"google.golang.org/grpc"
 )
 
@@ -105,15 +107,12 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	return resp.Uid, resp.Gid, err
 }
 
-// ReqDockerStoreMount requests sysbox-mgr to setup a Docker Store mount
-// 'id' is the containers id
-// 'rootfs' is the abs path to the container's rootfs
-// 'uid' and 'gid' are the uid and gid of the container's root user on the host
-// 'shiftUids' indicates if sysbox-runc is using uid-shifting for the container.
-func ReqDockerStoreMount(id string, rootfs string, uid, gid uint32, shiftUids bool) (*pb.Mount, error) {
+// ReqMounts requests the sysbox-mgr to setup sys container special mounts
+func ReqMounts(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error) {
+
 	conn, err := connect()
 	if err != nil {
-		return &pb.Mount{}, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+		return nil, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
 	}
 	defer conn.Close()
 
@@ -121,28 +120,46 @@ func ReqDockerStoreMount(id string, rootfs string, uid, gid uint32, shiftUids bo
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	req := &pb.DsMountReq{
+	// Convert []ipcLib.MountReqInfo -> []*pb.MountReqInfo
+	pbReqList := []*pb.MountReqInfo{}
+	for _, info := range reqList {
+		pbInfo := &pb.MountReqInfo{
+			Dest: info.Dest,
+		}
+		pbReqList = append(pbReqList, pbInfo)
+	}
+
+	req := &pb.MountReq{
 		Id:        id,
 		Rootfs:    rootfs,
 		Uid:       uid,
 		Gid:       gid,
 		ShiftUids: shiftUids,
+		ReqList:   pbReqList,
 	}
 
-	resp, err := ch.ReqDockerStoreMount(ctx, req)
+	resp, err := ch.ReqMounts(ctx, req)
 	if err != nil {
-		return &pb.Mount{}, fmt.Errorf("failed to invoke ReqDockerStoreMount via grpc: %v", err)
+		return nil, fmt.Errorf("failed to invoke ReqMounts via grpc: %v", err)
 	}
 
-	return resp.GetMount(), nil
+	// Convert []*pb.Mount -> []specs.Mount
+	specMounts := []specs.Mount{}
+	for _, m := range resp.Mounts {
+		specm := specs.Mount{
+			Source:      m.GetSource(),
+			Destination: m.GetDest(),
+			Type:        m.GetType(),
+			Options:     m.GetOpt(),
+		}
+		specMounts = append(specMounts, specm)
+	}
+
+	return specMounts, nil
 }
 
-// PrepDockerStoreMount requests sysbox-mgr to prepare an existing Docker store mount-point for use by a sys container.
-// 'id' is the containers id
-// 'path' is the abs path to the docker-store mount source on the host.
-// 'uid' and 'gid' are the uid and gid of the container's root user on the host
-// 'shiftUids' indicates if sysbox-runc is using uid-shifting for the container.
-func PrepDockerStoreMount(id string, path string, uid, gid uint32, shiftUids bool) error {
+// PrepMounts requests sysbox-mgr to prepare a mount source for use by a sys container.
+func PrepMounts(id string, uid, gid uint32, shiftUids bool, prepList []ipcLib.MountPrepInfo) error {
 	conn, err := connect()
 	if err != nil {
 		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
@@ -153,17 +170,27 @@ func PrepDockerStoreMount(id string, path string, uid, gid uint32, shiftUids boo
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	req := &pb.DsMountPrepReq{
+	// Convert []ipcLib.MountPrepInfo -> []*pb.MountPrepInfo
+	pbPrepList := []*pb.MountPrepInfo{}
+	for _, info := range prepList {
+		pbInfo := &pb.MountPrepInfo{
+			Source:    info.Source,
+			Exclusive: info.Exclusive,
+		}
+		pbPrepList = append(pbPrepList, pbInfo)
+	}
+
+	req := &pb.MountPrepReq{
 		Id:        id,
-		Path:      path,
 		Uid:       uid,
 		Gid:       gid,
 		ShiftUids: shiftUids,
+		PrepList:  pbPrepList,
 	}
 
-	_, err = ch.PrepDockerStoreMount(ctx, req)
+	_, err = ch.PrepMounts(ctx, req)
 	if err != nil {
-		return fmt.Errorf("failed to invoke PrepDockerStoreMount via grpc: %v", err)
+		return fmt.Errorf("failed to invoke PrepMounts via grpc: %v", err)
 	}
 
 	return nil

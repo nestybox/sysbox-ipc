@@ -24,11 +24,11 @@ service sysboxMgrStateChannel {
     // Subuid(gid) allocation request
     rpc SubidAlloc (SubidAllocReq) returns (SubidAllocResp) {}
 
-    // Docker store mount request
-    rpc ReqDockerStoreMount (DsMountReq) returns (DsMountResp) {}
+    // Mount source prep request
+    rpc PrepMounts (MountPrepReq) returns (MountPrepResp) {}
 
-    // Docker store mount prep request
-    rpc PrepDockerStoreMount (DsMountPrepReq) returns (DsMountPrepResp) {}
+    // Mount request
+    rpc ReqMounts (MountReq) returns (MountResp) {}
 
     // Shiftfs mark request
     rpc ReqShiftfsMark (ShiftfsMarkReq) returns (ShiftfsMarkResp) {}
@@ -70,15 +70,40 @@ message SubidAllocResp {
 }
 
 //
-// Docker Store Mount Req
+// Mount Source Prep Request
 //
 
-message DsMountReq {
+message MountPrepInfo {
+    string source = 1;
+    bool exclusive = 2;
+}
+
+message MountPrepReq {
+    string id = 1;
+    uint32 uid = 2;
+    uint32 gid = 3;
+    bool shiftUids = 4;
+    repeated MountPrepInfo prepList = 5;
+}
+
+message MountPrepResp {
+}
+
+//
+// Mount Requests
+//
+
+message MountReqInfo {
+    string dest = 1;
+}
+
+message MountReq {
     string id = 1;
     string rootfs = 2;
     uint32 uid = 3;
     uint32 gid = 4;
     bool shiftUids = 5;
+    repeated MountReqInfo reqList = 6;
 }
 
 message Mount {
@@ -88,23 +113,8 @@ message Mount {
     repeated string opt = 4;
 }
 
-message DsMountResp {
-    Mount mount = 1;
-}
-
-//
-// Docker Store Mount Prep Req
-//
-
-message DsMountPrepReq {
-    string id = 1;
-    string path = 2;
-    uint32 uid = 3;
-    uint32 gid = 4;
-    bool shiftUids = 5;
-}
-
-message DsMountPrepResp {
+message MountResp {
+    repeated Mount mounts = 1;
 }
 
 //
