@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"path"
 	"os"
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
@@ -22,7 +23,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const grpcSockAddr = "/run/sysbox/sysmgr.sock"
+const sysMgrGrpcSockAddr = "/run/sysbox/sysmgr.sock"
 
 type ServerCallbacks struct {
 	Register       func(id string) error
@@ -42,23 +43,29 @@ func NewServerStub(cb *ServerCallbacks) *ServerStub {
 	if cb == nil {
 		return nil
 	}
+
+	if err := os.RemoveAll(sysMgrGrpcSockAddr); err != nil {
+		return nil
+	}
+
+	if err := os.MkdirAll(path.Dir(sysMgrGrpcSockAddr), 0700); err != nil {
+		return nil
+	}
+
 	return &ServerStub{
 		cb: cb,
 	}
 }
 
 func (s *ServerStub) Init() error {
-	if err := os.RemoveAll(grpcSockAddr); err != nil {
-		return err
-	}
 
-	lis, err := net.Listen("unix", grpcSockAddr)
+	lis, err := net.Listen("unix", sysMgrGrpcSockAddr)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %v", err)
 	}
 
-	if err := os.Chmod(grpcSockAddr, 0600); err != nil {
-		return fmt.Errorf("failed to chmod %s: %v", grpcSockAddr, err)
+	if err := os.Chmod(sysMgrGrpcSockAddr, 0600); err != nil {
+		return fmt.Errorf("failed to chmod %s: %v", sysMgrGrpcSockAddr, err)
 	}
 
 	grpcServer := grpc.NewServer()
@@ -73,7 +80,7 @@ func (s *ServerStub) Init() error {
 }
 
 func (s *ServerStub) GetAddr() string {
-	return grpcSockAddr
+	return sysMgrGrpcSockAddr
 }
 
 func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.RegisterResp, error) {

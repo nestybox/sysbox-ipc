@@ -20,14 +20,14 @@ import (
 )
 
 func unixConnect(addr string, t time.Duration) (net.Conn, error) {
-	unixAddr, err := net.ResolveUnixAddr("unix", grpcSockAddr)
+	unixAddr, err := net.ResolveUnixAddr("unix", sysMgrGrpcSockAddr)
 	conn, err := net.DialUnix("unix", nil, unixAddr)
 	return conn, err
 }
 
 // connect establishes grpc connection to the sysbox-mgr daemon.
 func connect() (*grpc.ClientConn, error) {
-	conn, err := grpc.Dial(grpcSockAddr, grpc.WithInsecure(), grpc.WithDialer(unixConnect))
+	conn, err := grpc.Dial(sysMgrGrpcSockAddr, grpc.WithInsecure(), grpc.WithDialer(unixConnect))
 	if err != nil {
 		return nil, err
 	}
