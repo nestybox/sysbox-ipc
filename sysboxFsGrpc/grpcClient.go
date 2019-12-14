@@ -7,7 +7,7 @@ package sysboxFsGrpc
 import (
 	"context"
 	"fmt"
-	"log"
+	"net"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
@@ -27,20 +27,27 @@ type ContainerData struct {
 	GidSize  int32
 }
 
+func unixConnect(addr string, t time.Duration) (net.Conn, error) {
+	unixAddr, err := net.ResolveUnixAddr("unix", sysFsGrpcSockAddr)
+	conn, err := net.DialUnix("unix", nil, unixAddr)
+	return conn, err
+}
+
 //
 // Establishes grpc connection to sysbox-fs' remote-end.
 //
-func connect() *grpc.ClientConn {
-
+func connect() (*grpc.ClientConn, error) {
 	// Set up a connection to the server.
 	// TODO: Secure me through TLS.
-	conn, err := grpc.Dial(sysboxFsAddress, grpc.WithInsecure())
+	conn, err := grpc.Dial(
+		sysFsGrpcSockAddr,
+		grpc.WithInsecure(),
+		grpc.WithDialer(unixConnect),
+	)
 	if err != nil {
-		log.Fatalf("Could not connect to sysbox-fs: %v", err)
-		return nil
+		return nil, err
 	}
-
-	return conn
+	return conn, nil
 }
 
 func containerDataToPbData(data *ContainerData) (*pb.ContainerData, error) {
@@ -83,12 +90,10 @@ func pbDatatoContainerData(pbdata *pb.ContainerData) (*ContainerData, error) {
 // on container's boot-up speed.
 //
 func SendContainerRegistration(data *ContainerData) (err error) {
-	var pbData *pb.ContainerData
-
 	// Set up sysbox-fs pipeline.
-	conn := connect()
-	if conn == nil {
-		return fmt.Errorf("failed to connect with sysbox-fs")
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-fs: %v", err)
 	}
 	defer conn.Close()
 
@@ -97,7 +102,7 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	pbData, err = containerDataToPbData(data)
+	pbData, err := containerDataToPbData(data)
 	if err != nil {
 		return fmt.Errorf("convertion to protobuf data failed: %v", err)
 	}
@@ -114,12 +119,10 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 // Unregisters container from sysbox-fs.
 //
 func SendContainerUnregistration(data *ContainerData) (err error) {
-	var pbData *pb.ContainerData
-
 	// Set up sysbox-fs pipeline.
-	conn := connect()
-	if conn == nil {
-		return fmt.Errorf("failed to connect with sysbox-fs")
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-fs: %v", err)
 	}
 	defer conn.Close()
 
@@ -128,7 +131,7 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	pbData, err = containerDataToPbData(data)
+	pbData, err := containerDataToPbData(data)
 	if err != nil {
 		return fmt.Errorf("convertion to protobuf data failed: %v", err)
 	}
@@ -148,12 +151,10 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 // in the future.
 //
 func SendContainerUpdate(data *ContainerData) (err error) {
-	var pbData *pb.ContainerData
-
 	// Set up sysbox-fs pipeline.
-	conn := connect()
-	if conn == nil {
-		return fmt.Errorf("failed to connect with sysbox-fs")
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-fs: %v", err)
 	}
 	defer conn.Close()
 
@@ -162,7 +163,7 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	pbData, err = containerDataToPbData(data)
+	pbData, err := containerDataToPbData(data)
 	if err != nil {
 		return fmt.Errorf("convertion to protobuf data failed: %v", err)
 	}

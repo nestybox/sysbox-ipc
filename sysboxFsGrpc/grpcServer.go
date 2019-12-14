@@ -7,8 +7,11 @@ package sysboxFsGrpc
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net"
+	"path"
+	"os"
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/protobuf"
 
@@ -21,12 +24,7 @@ import (
 // (ipc) logic.
 //
 
-
-const (
-      sysboxFsPort = ":50052"
-      sysboxFsAddress = "localhost" + sysboxFsPort
-)
-
+const sysFsGrpcSockAddr = "/run/sysbox/sysfs.sock"
 
 const (
 	Unknown MessageType = iota
@@ -60,6 +58,14 @@ func NewServer(ctx interface{}, cb *CallbacksMap) *Server {
 		return nil
 	}
 
+	if err := os.RemoveAll(sysFsGrpcSockAddr); err != nil {
+		return nil
+	}
+
+	if err := os.MkdirAll(path.Dir(sysFsGrpcSockAddr), 0700); err != nil {
+		return nil
+	}
+
 	newServer := &Server{
 		Ctx:       ctx,
 		Callbacks: make(map[MessageType]Callback),
@@ -72,17 +78,19 @@ func NewServer(ctx interface{}, cb *CallbacksMap) *Server {
 	return newServer
 }
 
-func (s *Server) Init() {
+func (s *Server) Init() error {
 
-	// TODO: Change me to unix-socket instead: more secure/efficient.
-	lis, err := net.Listen("tcp", sysboxFsPort)
+	lis, err := net.Listen("unix", sysFsGrpcSockAddr)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		return fmt.Errorf("failed to listen: %v", err)
+	}
+
+	if err := os.Chmod(sysFsGrpcSockAddr, 0700); err != nil {
+		return fmt.Errorf("failed to chmod %s: %v", sysFsGrpcSockAddr, err)
 	}
 
 	// Initializing grpc server
 	grpcServer := grpc.NewServer()
-
 	pb.RegisterSysboxStateChannelServer(grpcServer, s)
 
 	// Register reflection service on gRPC server.
@@ -90,6 +98,8 @@ func (s *Server) Init() {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
+
+	return nil
 }
 
 // TODO: To be implemented in the future if needed.
