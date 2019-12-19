@@ -14,28 +14,35 @@ type Server struct {}
 func (s *Server) Init(addr string, handler func(*net.UnixConn) error) error {
 
 	if err := os.RemoveAll(addr); err != nil {
-		logrus.Errorf("Unable to remove() seccompTracer socket.")
+		logrus.Errorf("Unable to remove address %v (%v).", addr, err)
 		return err
     }
 
 	unixAddr, err := net.ResolveUnixAddr("unix", addr)
 	if err != nil {
-		logrus.Errorf("Unable to resolve address for seccompTracer socket.")
+		logrus.Errorf("Unable to resolve address %v (%v).", addr, err)
 		return err
 	}
 
 	listener, err := net.ListenUnix("unix", unixAddr)
 	if err != nil {
-		logrus.Errorf("Unable to listen() through seccompTracer socket.")
+		logrus.Errorf("Unable to listen through addr %v (%v).", addr, err)
 		return err
 	}
 	defer listener.Close()
+
+	err = os.Chmod(addr, 0700)
+	if err != nil {
+		logrus.Errorf("Unable to set %v socket permissions (%v).", addr, err)
+		return err
+    }
 
 	for {
 		//
 		conn, err := listener.AcceptUnix()
 		if err != nil {
-			logrus.Errorf("Unable to accept() seccompTracer connection.")
+			logrus.Errorf("Unable to establish connection (%v).", err)
+			logrus.Errorf("hey")
 			return err
 		}
 
@@ -43,6 +50,26 @@ func (s *Server) Init(addr string, handler func(*net.UnixConn) error) error {
 	}
 
 	return nil
+}
+
+type Client struct {}
+
+func (c *Client) Connect(addr string) (*net.UnixConn, error) {
+
+	unixAddr, err := net.ResolveUnixAddr("unix", addr)
+	if err != nil {
+		logrus.Errorf("Unable to resolve address %v (%v).", addr, err)
+		return nil, err
+	}
+
+	conn, err := net.DialUnix("unix", nil, unixAddr)
+	if err != nil {
+		logrus.Errorf("Unable to dial to addr %v (%v).", addr, err)
+		return nil, err
+	}
+	defer conn.Close()
+
+	return conn, nil
 }
 
 const inbLength = 256
@@ -68,6 +95,25 @@ func RecvGenericMsg(c *net.UnixConn, inb []byte, oob []byte) error {
 	inb = inb[:inbn]
 	oob = oob[:oobn]
 	
+	return nil
+}
+
+func SendGenericMsg(c *net.UnixConn, inb []byte, oob []byte) error {
+
+	inbSize := len(inb)
+	oobSize := len(oob)
+
+	inbn, oobn, err := c.WriteMsgUnix(inb, oob, c.RemoteAddr().(*net.UnixAddr))
+	if err != nil {
+		logrus.Errorf("Unable to write message to endpoint %v", c.RemoteAddr())
+		return err
+	}
+
+	if inbn < inbSize || oobn < oobSize {
+		logrus.Errorf("Invalid msg sent to endpoint %v", c.RemoteAddr())
+		return err
+	}
+
 	return nil
 }
 
@@ -115,6 +161,16 @@ func RecvSeccompNotifMsg(c *net.UnixConn) (int, string, error) {
 	payload := string(oob)
 
 	return fd, payload, nil
+}
+
+func SendSeccompNotifMsg(c *net.UnixConn, fd int, cntrId string) error {
+
+	err := SendGenericMsg(c, []byte(string(fd)), []byte(cntrId))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Server) SendMsg(socket int, fds []int) error {
