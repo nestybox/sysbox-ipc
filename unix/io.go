@@ -1,9 +1,10 @@
 package unix
 
 import (
+	"fmt"
 	"net"
 	"os"
-	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
@@ -14,6 +15,9 @@ type Server struct {
 	handler  func(*net.UnixConn) error
 }
 
+// NewServer constructs a unix-server to handle inbound connections made to the
+// 'addr' unix-socket. Upon establishment, the connection will be handled by the
+// 'func' closure passed as parameter.
 func NewServer(addr string, handler func(*net.UnixConn) error) (*Server, error) {
 
 	if err := os.RemoveAll(addr); err != nil {
@@ -80,10 +84,10 @@ func Connect(addr string) (*net.UnixConn, error) {
 	return conn, nil
 }
 
-func RecvSeccompNotifMsg(c *net.UnixConn) (int, string, error) {
+func RecvSeccompNotifMsg(c *net.UnixConn) (int32, string, error) {
 
 	// TODO: Define these literals in a proper location.
-	const inbLength = 256
+	const inbLength = 64
 	var oobLength = unix.CmsgSpace(4)
 
 	inb := make([]byte, inbLength)
@@ -99,18 +103,46 @@ func RecvSeccompNotifMsg(c *net.UnixConn) (int, string, error) {
 		return -1, "", err
 	}
 
-	payload := string(inb)
+	payload := strings.TrimSuffix(string(inb), "\x00")
 
 	return fd, payload, nil
 }
 
-func SendSeccompNotifMsg(c *net.UnixConn, fd int, cntrId string) error {
+func SendSeccompNotifMsg(c *net.UnixConn, fd int32, cntrId string) error {
 
 	// Construct scm message.
-	oob := unix.UnixRights(fd)
+	oob := unix.UnixRights(int(fd))
 
 	// Send payload + scm messages.
 	err := sendGenericMsg(c, []byte(cntrId), oob)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RecvSeccompNotifAckMsg(c *net.UnixConn) error {
+
+	buf := make([]byte, 3)
+
+	// Send payload.
+	err := recvGenericMsg(c, buf, nil)
+	if err != nil {
+		return err
+	}
+
+	if string(buf) != "ack" {
+		return fmt.Errorf("invalid ack: %v", buf)
+	}
+
+	return nil
+}
+
+func SendSeccompNotifAckMsg(c *net.UnixConn) error {
+
+	// Send payload.
+	err := sendGenericMsg(c, []byte("ack"), nil)
 	if err != nil {
 		return err
 	}
@@ -161,7 +193,7 @@ func sendGenericMsg(c *net.UnixConn, inb []byte, oob []byte) error {
 	return nil
 }
 
-func parseScmRightsFd(c *net.UnixConn, oob []byte) (int, error) {
+func parseScmRightsFd(c *net.UnixConn, oob []byte) (int32, error) {
 
     scms, err := unix.ParseSocketControlMessage(oob)
     if err != nil {
@@ -182,7 +214,7 @@ func parseScmRightsFd(c *net.UnixConn, oob []byte) (int, error) {
 		return -1, fmt.Errorf("Unexpected number of fd's received: expected 1, received %v",
 			len(fds))
 	}
-	fd := int(fds[0])
+	fd := int32(fds[0])
 
 	return fd, nil
 }
