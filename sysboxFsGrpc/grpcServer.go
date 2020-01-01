@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"path"
 	"os"
+	"path"
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/protobuf"
 
@@ -153,7 +153,7 @@ func (s *Server) executeCallback(mtype MessageType,
 		return &pb.Response{Success: false}, err
 	}
 
-        err = (cb)(s.Ctx, cont)
+	err = (cb)(s.Ctx, cont)
 	if err != nil {
 		return &pb.Response{Success: false},
 			errors.New("gRPC server: unexpected response from client endpoint")

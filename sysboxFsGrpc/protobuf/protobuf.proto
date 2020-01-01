@@ -38,6 +38,8 @@ message ContainerData {
   int32 UidSize                   = 6;
   int32 GidFirst                  = 7;
   int32 GidSize                   = 8;
+  repeated string ProcRoPaths     = 9;
+  repeated string ProcMaskPaths   = 10;
 }
 
 // Response message sent from sysbox-fs to runC process.

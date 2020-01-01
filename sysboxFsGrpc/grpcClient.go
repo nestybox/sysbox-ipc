@@ -17,14 +17,16 @@ import (
 
 // Container info passed by the client to the server across the grpc channel
 type ContainerData struct {
-	Id       string
-	InitPid  int32
-	Hostname string
-	Ctime    time.Time
-	UidFirst int32
-	UidSize  int32
-	GidFirst int32
-	GidSize  int32
+	Id            string
+	InitPid       int32
+	Hostname      string
+	Ctime         time.Time
+	UidFirst      int32
+	UidSize       int32
+	GidFirst      int32
+	GidSize       int32
+	ProcRoPaths   []string
+	ProcMaskPaths []string
 }
 
 func unixConnect(addr string, t time.Duration) (net.Conn, error) {
@@ -57,13 +59,15 @@ func containerDataToPbData(data *ContainerData) (*pb.ContainerData, error) {
 	}
 
 	return &pb.ContainerData{
-		Id:       data.Id,
-		InitPid:  data.InitPid,
-		Ctime:    pbTime,
-		UidFirst: data.UidFirst,
-		UidSize:  data.UidSize,
-		GidFirst: data.GidFirst,
-		GidSize:  data.GidSize,
+		Id:            data.Id,
+		InitPid:       data.InitPid,
+		Ctime:         pbTime,
+		UidFirst:      data.UidFirst,
+		UidSize:       data.UidSize,
+		GidFirst:      data.GidFirst,
+		GidSize:       data.GidSize,
+		ProcRoPaths:   data.ProcRoPaths,
+		ProcMaskPaths: data.ProcMaskPaths,
 	}, nil
 }
 
@@ -74,13 +78,15 @@ func pbDatatoContainerData(pbdata *pb.ContainerData) (*ContainerData, error) {
 	}
 
 	return &ContainerData{
-		Id:       pbdata.Id,
-		InitPid:  pbdata.InitPid,
-		Ctime:    cTime,
-		UidFirst: pbdata.UidFirst,
-		UidSize:  pbdata.UidSize,
-		GidFirst: pbdata.GidFirst,
-		GidSize:  pbdata.GidSize,
+		Id:            pbdata.Id,
+		InitPid:       pbdata.InitPid,
+		Ctime:         cTime,
+		UidFirst:      pbdata.UidFirst,
+		UidSize:       pbdata.UidSize,
+		GidFirst:      pbdata.GidFirst,
+		GidSize:       pbdata.GidSize,
+		ProcRoPaths:   pbdata.ProcRoPaths,
+		ProcMaskPaths: pbdata.ProcMaskPaths,
 	}, nil
 }
 
