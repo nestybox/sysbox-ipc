@@ -32,7 +32,7 @@ service sysboxStateChannel {
 message ContainerData {
   string Id                       = 1;
   int32 InitPid                   = 2;
-  string Hostname                 = 3;
+  string Rootfs                   = 3;
   google.protobuf.Timestamp Ctime = 4;
   int32 UidFirst                  = 5;
   int32 UidSize                   = 6;

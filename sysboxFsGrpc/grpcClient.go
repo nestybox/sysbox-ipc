@@ -19,7 +19,7 @@ import (
 type ContainerData struct {
 	Id            string
 	InitPid       int32
-	Hostname      string
+	Rootfs        string
 	Ctime         time.Time
 	UidFirst      int32
 	UidSize       int32
@@ -61,6 +61,7 @@ func containerDataToPbData(data *ContainerData) (*pb.ContainerData, error) {
 	return &pb.ContainerData{
 		Id:            data.Id,
 		InitPid:       data.InitPid,
+		Rootfs:        data.Rootfs,
 		Ctime:         pbTime,
 		UidFirst:      data.UidFirst,
 		UidSize:       data.UidSize,
@@ -80,6 +81,7 @@ func pbDatatoContainerData(pbdata *pb.ContainerData) (*ContainerData, error) {
 	return &ContainerData{
 		Id:            pbdata.Id,
 		InitPid:       pbdata.InitPid,
+		Rootfs:        pbdata.Rootfs,
 		Ctime:         cTime,
 		UidFirst:      pbdata.UidFirst,
 		UidSize:       pbdata.UidSize,
