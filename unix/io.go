@@ -23,7 +23,7 @@ func NewServer(addr string, handler func(*net.UnixConn) error) (*Server, error) 
 	if err := os.RemoveAll(addr); err != nil {
 		logrus.Errorf("Unable to remove address %v (%v).", addr, err)
 		return nil, err
-    }
+	}
 
 	unixAddr, err := net.ResolveUnixAddr("unix", addr)
 	if err != nil {
@@ -41,11 +41,11 @@ func NewServer(addr string, handler func(*net.UnixConn) error) (*Server, error) 
 	if err != nil {
 		logrus.Errorf("Unable to set %v socket permissions (%v).", addr, err)
 		return nil, err
-    }
+	}
 
 	srv := &Server{
 		listener: *listener,
-		handler: handler,
+		handler:  handler,
 	}
 
 	go srv.run()
@@ -170,7 +170,7 @@ func recvGenericMsg(c *net.UnixConn, inb []byte, oob []byte) error {
 	// Truncate inband and outbound buffers to match received sizes.
 	inb = inb[:inbn]
 	oob = oob[:oobn]
-	
+
 	return nil
 }
 
@@ -195,15 +195,15 @@ func sendGenericMsg(c *net.UnixConn, inb []byte, oob []byte) error {
 
 func parseScmRightsFd(c *net.UnixConn, oob []byte) (int32, error) {
 
-    scms, err := unix.ParseSocketControlMessage(oob)
-    if err != nil {
-        logrus.Errorf("Unexpected error while parsing SocketControlMessage msg")
-        return 0, err
-    }
+	scms, err := unix.ParseSocketControlMessage(oob)
+	if err != nil {
+		logrus.Errorf("Unexpected error while parsing SocketControlMessage msg")
+		return 0, err
+	}
 	if len(scms) != 1 {
-        logrus.Errorf("Unexpected number of SocketControlMessages received: expected 1, received %v",
+		logrus.Errorf("Unexpected number of SocketControlMessages received: expected 1, received %v",
 			len(scms))
-        return -1, err
+		return -1, err
 	}
 
 	fds, err := unix.ParseUnixRights(&scms[0])
@@ -218,4 +218,3 @@ func parseScmRightsFd(c *net.UnixConn, oob []byte) (int32, error) {
 
 	return fd, nil
 }
-
