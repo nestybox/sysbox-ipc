@@ -37,7 +37,7 @@ func NewServer(addr string, handler func(*net.UnixConn) error) (*Server, error) 
 		return nil, err
 	}
 
-	err = os.Chmod(addr, 0700)
+	err = os.Chmod(addr, 0600)
 	if err != nil {
 		logrus.Errorf("Unable to set %v socket permissions (%v).", addr, err)
 		return nil, err

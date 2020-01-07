@@ -85,7 +85,7 @@ func (s *Server) Init() error {
 		return fmt.Errorf("failed to listen: %v", err)
 	}
 
-	if err := os.Chmod(sysFsGrpcSockAddr, 0700); err != nil {
+	if err := os.Chmod(sysFsGrpcSockAddr, 0600); err != nil {
 		return fmt.Errorf("failed to chmod %s: %v", sysFsGrpcSockAddr, err)
 	}
 
