@@ -1,10 +1,10 @@
 package unix
 
 import (
+       "bytes"
 	"fmt"
 	"net"
 	"os"
-	"strings"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
@@ -103,7 +103,7 @@ func RecvSeccompNotifMsg(c *net.UnixConn) (int32, string, error) {
 		return -1, "", err
 	}
 
-	payload := strings.TrimSuffix(string(inb), "\x00")
+	payload := string(bytes.TrimRight(inb, "\x00"))
 
 	return fd, payload, nil
 }
