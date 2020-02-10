@@ -1,7 +1,8 @@
 package unix
 
 import (
-       "bytes"
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
@@ -84,37 +85,59 @@ func Connect(addr string) (*net.UnixConn, error) {
 	return conn, nil
 }
 
-func RecvSeccompNotifMsg(c *net.UnixConn) (int32, string, error) {
+type seccompInit struct {
+	Pid    int32  `json:"pid"`
+	CntrId string `json:"cntrId"`
+}
+
+func RecvSeccompInitMsg(c *net.UnixConn) (int32, string, int32, error) {
 
 	// TODO: Define these literals in a proper location.
-	const inbLength = 64
+	// {"pid": 27693,"cntrId":"54970eb2fa086ccd0f550b23679d13fc577e041be14121d78d9389ec051b20f8"}
+	const inbLength = 100 // 4 bytes pid + 64 bytes cntrId + padding
 	var oobLength = unix.CmsgSpace(4)
 
 	inb := make([]byte, inbLength)
 	oob := make([]byte, oobLength)
 
 	if err := recvGenericMsg(c, inb, oob); err != nil {
-		return -1, "", err
+		return -1, "", -1, err
 	}
 
 	// Parse received control-msg to extract one file-descriptor.
 	fd, err := parseScmRightsFd(c, oob)
 	if err != nil {
-		return -1, "", err
+		return -1, "", -1, err
 	}
 
-	payload := string(bytes.TrimRight(inb, "\x00"))
+	// Remove any null character that may have come along.
+	payload := bytes.TrimRight(inb, "\x00")
 
-	return fd, payload, nil
+	// Decode inband payload msg.
+	var seccompInit seccompInit
+	err = json.Unmarshal(payload, &seccompInit)
+	if err != nil {
+		return -1, "", -1, err
+	}
+
+	return seccompInit.Pid, seccompInit.CntrId, fd, nil
 }
 
-func SendSeccompNotifMsg(c *net.UnixConn, fd int32, cntrId string) error {
+func SendSeccompInitMsg(
+	c *net.UnixConn, pid int32, cntrId string, fd int32) error {
 
 	// Construct scm message.
 	oob := unix.UnixRights(int(fd))
 
+	seccompInit := &seccompInit{Pid: pid, CntrId: cntrId}
+	inb, err := json.Marshal(seccompInit)
+	if err != nil {
+		logrus.Errorf("Could not encode seccompInit payload (%v)", err)
+		return err
+	}
+
 	// Send payload + scm messages.
-	err := sendGenericMsg(c, []byte(cntrId), oob)
+	err = sendGenericMsg(c, inb, oob)
 	if err != nil {
 		return err
 	}
@@ -122,7 +145,7 @@ func SendSeccompNotifMsg(c *net.UnixConn, fd int32, cntrId string) error {
 	return nil
 }
 
-func RecvSeccompNotifAckMsg(c *net.UnixConn) error {
+func RecvSeccompInitAckMsg(c *net.UnixConn) error {
 
 	buf := make([]byte, 3)
 
@@ -139,7 +162,7 @@ func RecvSeccompNotifAckMsg(c *net.UnixConn) error {
 	return nil
 }
 
-func SendSeccompNotifAckMsg(c *net.UnixConn) error {
+func SendSeccompInitAckMsg(c *net.UnixConn) error {
 
 	// Send payload.
 	err := sendGenericMsg(c, []byte("ack"), nil)
