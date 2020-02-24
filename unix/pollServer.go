@@ -169,9 +169,11 @@ func (ps *PollServer) run() {
 		// Initiating polling attempt. Notice that no timeout interval is passed.
 		n, err := unix.Poll(pfds, -1)
 		if err != nil && err != syscall.EINTR {
+			logrus.Debugf("pollserver: error during poll() syscall (%v)", err)
 			break
 		}
 		if n <= 0 {
+			logrus.Debugf("pollserver: unexpected value (n = %d) during poll() syscall", n)
 			continue
 		}
 
@@ -217,8 +219,12 @@ func (ps *PollServer) run() {
 func (ps *PollServer) processWakeupEvent() {
 
 	// TODO: Define this literal in a global var and document its rationale.
-	var buf [100]byte
-	ps.wakeupReader.Read(buf[0:])
+	buf := make([]byte, 100)
+	_, err := ps.wakeupReader.Read(buf)
+	if err != nil {
+		logrus.Errorf("processWakeupEvent read error (%v)", err)
+		return
+	}
 
 	// Collect received pollAction and add it to the pollActionMap
 	pa := <-ps.pollActionCh
