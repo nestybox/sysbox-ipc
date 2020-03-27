@@ -139,7 +139,6 @@ func (ps *PollServer) StopWait(fd int32) error {
 	ps.RUnlock()
 
 	if !ok {
-		logrus.Errorf("No poll-request to eliminate for fd %d", fd)
 		return fmt.Errorf("No poll-request to eliminate for fd %d", fd)
 	}
 	pa.actionType = DELETE_POLL_REQUEST
