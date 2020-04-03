@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
@@ -23,6 +24,11 @@ func NewServer(addr string, handler func(*net.UnixConn) error) (*Server, error) 
 
 	if err := os.RemoveAll(addr); err != nil {
 		logrus.Errorf("Unable to remove address %v (%v).", addr, err)
+		return nil, err
+	}
+
+	if err := os.MkdirAll(path.Dir(addr), 0700); err != nil {
+		logrus.Errorf("Unable to mkdir %v (%v).", path.Dir(addr), err)
 		return nil, err
 	}
 
