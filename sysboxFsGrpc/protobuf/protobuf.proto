@@ -15,6 +15,9 @@ package protobuf;
 // ContainerRegistration/Unregistration service definition.
 service sysboxStateChannel {
 
+    // Generates a container-preregistration message
+    rpc ContainerPreRegistration (ContainerData) returns (Response) {}
+
     // Generates a container-registration message
     rpc ContainerRegistration (ContainerData) returns (Response) {}
 

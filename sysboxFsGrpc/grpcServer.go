@@ -28,6 +28,7 @@ const sysFsGrpcSockAddr = "/run/sysbox/sysfs.sock"
 
 const (
 	Unknown MessageType = iota
+	ContainerPreRegisterMessage
 	ContainerRegisterMessage
 	ContainerUnregisterMessage
 	ContainerUpdateMessage
@@ -36,6 +37,7 @@ const (
 
 var messageTypeStrings = [...]string{
 	"Unknown",
+	"ContainerPreRegister",
 	"ContainerRegister",
 	"ContainerUnregister",
 	"ContainerUpdate",
@@ -110,6 +112,12 @@ func (s *Server) CallbackRegister(c *Callback) {
 // TODO: To be implemented in the future if needed.
 func (s *Server) CallbackUnregister(c *Callback) {
 
+}
+
+func (s *Server) ContainerPreRegistration(
+	ctx context.Context, data *pb.ContainerData) (*pb.Response, error) {
+
+	return s.executeCallback(ContainerPreRegisterMessage, data)
 }
 
 func (s *Server) ContainerRegistration(

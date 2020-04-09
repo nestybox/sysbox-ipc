@@ -91,9 +91,38 @@ func pbDatatoContainerData(pbdata *pb.ContainerData) (*ContainerData, error) {
 }
 
 //
-// Registers container creation in sysbox-fs. Notice that this
+// Pre-registers container creation in sysbox-fs. Notice that this
 // is a blocking call that can potentially have a minor impact
 // on container's boot-up speed.
+//
+func SendContainerPreRegistration(data *ContainerData) (err error) {
+	// Set up sysbox-fs pipeline.
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-fs: %v", err)
+	}
+	defer conn.Close()
+
+	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	pbData, err := containerDataToPbData(data)
+	if err != nil {
+		return fmt.Errorf("convertion to protobuf data failed: %v", err)
+	}
+
+	_, err = cntrChanIntf.ContainerPreRegistration(ctx, pbData)
+	if err != nil {
+		return fmt.Errorf("failed to register container with sysbox-fs: %v", err)
+	}
+
+	return nil
+}
+
+//
+// Registers container creation in sysbox-fs.
 //
 func SendContainerRegistration(data *ContainerData) (err error) {
 	// Set up sysbox-fs pipeline.
