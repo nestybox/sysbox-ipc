@@ -124,6 +124,7 @@ func ReqMounts(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipc
 	pbReqList := []*pb.MountReqInfo{}
 	for _, info := range reqList {
 		pbInfo := &pb.MountReqInfo{
+			Kind: uint32(info.Kind),
 			Dest: info.Dest,
 		}
 		pbReqList = append(pbReqList, pbInfo)

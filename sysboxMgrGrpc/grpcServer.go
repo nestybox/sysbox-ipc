@@ -132,6 +132,7 @@ func (s *ServerStub) ReqMounts(ctx context.Context, req *pb.MountReq) (*pb.Mount
 	reqList := []ipcLib.MountReqInfo{}
 	for _, pbInfo := range req.ReqList {
 		info := ipcLib.MountReqInfo{
+			Kind: ipcLib.MntKind(pbInfo.GetKind()),
 			Dest: pbInfo.GetDest(),
 		}
 		reqList = append(reqList, info)

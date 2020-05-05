@@ -94,7 +94,8 @@ message MountPrepResp {
 //
 
 message MountReqInfo {
-    string dest = 1;
+    uint32 kind = 1;
+    string dest = 2;
 }
 
 message MountReq {
