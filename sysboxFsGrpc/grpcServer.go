@@ -6,7 +6,6 @@ package sysboxFsGrpc
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -16,7 +15,9 @@ import (
 	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/protobuf"
 
 	"google.golang.org/grpc"
+	grpcCodes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	grpcStatus "google.golang.org/grpc/status"
 )
 
 //
@@ -141,18 +142,21 @@ func (s *Server) ContainerUpdate(
 func (s *Server) executeCallback(mtype MessageType,
 	data *pb.ContainerData) (*pb.Response, error) {
 
+	// Sanity-check data field here to avoid doing it in server backend.
 	if data == nil {
 		return &pb.Response{Success: false},
-			errors.New("gRPC server: invalid msg payload received")
+			grpcStatus.Error(grpcCodes.InvalidArgument, "Invalid data field")
 	}
-
-	// Verify incoming message-request is supported.
 
 	// Obtain the associated callback matching this incoming request.
 	cb, ok := s.Callbacks[mtype]
 	if !ok {
 		return &pb.Response{Success: false},
-			errors.New("gRPC server: no callback registered for incoming msg")
+			grpcStatus.Errorf(
+				grpcCodes.Unimplemented,
+				"Method type %v not implemented",
+				mtype,
+			)
 	}
 
 	// Transform received payload to a grpc/protobuf-agnostic message.
@@ -163,8 +167,7 @@ func (s *Server) executeCallback(mtype MessageType,
 
 	err = (cb)(s.Ctx, cont)
 	if err != nil {
-		return &pb.Response{Success: false},
-			errors.New("gRPC server: unexpected response from client endpoint")
+		return &pb.Response{Success: false}, err
 	}
 
 	return &pb.Response{Success: true}, nil
