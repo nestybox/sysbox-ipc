@@ -11,8 +11,8 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"path"
 	"os"
+	"path"
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
 	ipcLib "github.com/nestybox/sysbox-ipc/sysboxMgrLib"
@@ -87,27 +87,40 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 	if req == nil {
 		return &pb.RegisterResp{}, errors.New("invalid payload")
 	}
-	err := s.cb.Register(req.GetId())
-	return &pb.RegisterResp{}, err
+
+	if err := s.cb.Register(req.GetId()); err != nil {
+		return nil, err
+	}
+
+	return &pb.RegisterResp{}, nil
 }
 
 func (s *ServerStub) Unregister(ctx context.Context, req *pb.UnregisterReq) (*pb.UnregisterResp, error) {
 	if req == nil {
 		return &pb.UnregisterResp{}, errors.New("invalid payload")
 	}
-	err := s.cb.Unregister(req.GetId())
-	return &pb.UnregisterResp{}, err
+
+	if err := s.cb.Unregister(req.GetId()); err != nil {
+		return nil, err
+	}
+
+	return &pb.UnregisterResp{}, nil
 }
 
 func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb.SubidAllocResp, error) {
 	if req == nil {
 		return &pb.SubidAllocResp{}, errors.New("invalid payload")
 	}
+
 	uid, gid, err := s.cb.SubidAlloc(req.GetId(), req.GetSize())
+	if err != nil {
+		return nil, err
+	}
+
 	return &pb.SubidAllocResp{
 		Uid: uid,
 		Gid: gid,
-	}, err
+	}, nil
 }
 
 func (s *ServerStub) ReqMounts(ctx context.Context, req *pb.MountReq) (*pb.MountResp, error) {
@@ -126,7 +139,7 @@ func (s *ServerStub) ReqMounts(ctx context.Context, req *pb.MountReq) (*pb.Mount
 
 	mounts, err := s.cb.ReqMounts(req.GetId(), req.GetRootfs(), req.GetUid(), req.GetGid(), req.GetShiftUids(), reqList)
 	if err != nil {
-		return &pb.MountResp{}, err
+		return nil, err
 	}
 
 	// convert []*specs.Mount -> []*pb.Mount
@@ -161,8 +174,11 @@ func (s *ServerStub) PrepMounts(ctx context.Context, req *pb.MountPrepReq) (*pb.
 		prepList = append(prepList, info)
 	}
 
-	err := s.cb.PrepMounts(req.GetId(), req.GetUid(), req.GetGid(), req.GetShiftUids(), prepList)
-	return &pb.MountPrepResp{}, err
+	if err := s.cb.PrepMounts(req.GetId(), req.GetUid(), req.GetGid(), req.GetShiftUids(), prepList); err != nil {
+		return nil, err
+	}
+
+	return &pb.MountPrepResp{}, nil
 }
 
 func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq) (*pb.ShiftfsMarkResp, error) {
@@ -180,14 +196,21 @@ func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq)
 		shiftfsMounts = append(shiftfsMounts, sm)
 	}
 
-	err := s.cb.ReqShiftfsMark(req.GetId(), req.GetRootfs(), shiftfsMounts)
-	return &pb.ShiftfsMarkResp{}, err
+	if err := s.cb.ReqShiftfsMark(req.GetId(), req.GetRootfs(), shiftfsMounts); err != nil {
+		return nil, err
+	}
+
+	return &pb.ShiftfsMarkResp{}, nil
 }
 
 func (s *ServerStub) Pause(ctx context.Context, req *pb.PauseReq) (*pb.PauseResp, error) {
 	if req == nil {
 		return &pb.PauseResp{}, errors.New("invalid payload")
 	}
-	err := s.cb.Pause(req.GetId())
-	return &pb.PauseResp{}, err
+
+	if err := s.cb.Pause(req.GetId()); err != nil {
+		return nil, err
+	}
+
+	return &pb.PauseResp{}, nil
 }
