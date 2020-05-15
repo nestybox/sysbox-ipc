@@ -158,12 +158,14 @@ func (ps *PollServer) run() {
 		// actions to process. No need to acquire rlock here as this is the very
 		// goroutine (and the only one) that modifies pollServer internal structs.
 		i := 0
+		ps.RLock()
 		pfds := make([]unix.PollFd, len(ps.pollActionMap))
 		for k := range ps.pollActionMap {
 			pfds[i].Fd = k
 			pfds[i].Events = unix.POLLIN
 			i++
 		}
+		ps.RUnlock()
 
 		// Initiating polling attempt. Notice that no timeout interval is passed.
 		n, err := unix.Poll(pfds, -1)
@@ -209,14 +211,15 @@ func (ps *PollServer) processPollHupEvent(pfd *unix.PollFd) error {
 
 	logrus.Debugf("pollserver: POLLHUP event received on fd %d", pfd.Fd)
 
+	ps.Lock()
 	pa, ok := ps.pollActionMap[pfd.Fd]
 	if !ok {
+		ps.Unlock()
 		return fmt.Errorf("pollserver: POLLHUP event received on unknown fd %v",
 			pfd.Fd)
 	}
 
 	// Delete fd from pollAction map.
-	ps.Lock()
 	delete(ps.pollActionMap, pfd.Fd)
 	ps.Unlock()
 
@@ -231,14 +234,15 @@ func (ps *PollServer) processPollNvalEvent(pfd *unix.PollFd) error {
 
 	logrus.Debugf("pollserver: POLLNVAL event received on fd %d", pfd.Fd)
 
+	ps.Lock()
 	pa, ok := ps.pollActionMap[pfd.Fd]
 	if !ok {
+		ps.Unlock()
 		return fmt.Errorf("pollserver: POLLNVAL event received on unknown fd %v",
 			pfd.Fd)
 	}
 
 	// Delete fd from pollAction map.
-	ps.Lock()
 	delete(ps.pollActionMap, pfd.Fd)
 	ps.Unlock()
 
@@ -253,14 +257,15 @@ func (ps *PollServer) processPollErrEvent(pfd *unix.PollFd) error {
 
 	logrus.Debugf("pollserver: POLLERR event received on fd %d", pfd.Fd)
 
+	ps.Lock()
 	pa, ok := ps.pollActionMap[pfd.Fd]
 	if !ok {
+		ps.Unlock()
 		return fmt.Errorf("pollserver: POLLERR event received on unknown fd %v",
 			pfd.Fd)
 	}
 
 	// Delete fd from pollAction map.
-	ps.Lock()
 	delete(ps.pollActionMap, pfd.Fd)
 	ps.Unlock()
 
@@ -317,14 +322,15 @@ func (ps *PollServer) processPollInEvent(pfd *unix.PollFd) error {
 
 	logrus.Debugf("pollserver: POLLIN event received on fd %d", pfd.Fd)
 
+	ps.Lock()
 	pa, ok := ps.pollActionMap[pfd.Fd]
 	if !ok {
+		ps.Unlock()
 		return fmt.Errorf("pollserver: POLLIN event received on unknown fd %v",
 			pfd.Fd)
 	}
 
 	// Delete fd from pollAction map.
-	ps.Lock()
 	delete(ps.pollActionMap, pfd.Fd)
 	ps.Unlock()
 
@@ -339,14 +345,15 @@ func (ps *PollServer) processPollOutEvent(pfd *unix.PollFd) error {
 
 	logrus.Debugf("pollserver: POLLOUT event received on fd %d", pfd.Fd)
 
+	ps.Lock()
 	pa, ok := ps.pollActionMap[pfd.Fd]
 	if !ok {
+		ps.Unlock()
 		return fmt.Errorf("pollserver: POLLOUT event received on unknown fd %v",
 			pfd.Fd)
 	}
 
 	// Delete fd from action map.
-	ps.Lock()
 	delete(ps.pollActionMap, pfd.Fd)
 	ps.Unlock()
 
