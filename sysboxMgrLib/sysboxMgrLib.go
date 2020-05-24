@@ -1,10 +1,22 @@
 //
-// Copyright: (C) 2019 Nestybox Inc.  All rights reserved.
+// Copyright: (C) 2019-2020 Nestybox Inc.  All rights reserved.
 //
 
 // Common definitions for grpc transfers with sysbox-mgr
 
 package sysboxMgrLib
+
+//
+// Sysbox-mgr config shared with other Sysbox components
+//
+
+type MgrConfig struct {
+	AliasDns bool
+}
+
+//
+// Mount requests from sysbox-runc to sysbox-mgr
+//
 
 type MountPrepInfo struct {
 	Source    string

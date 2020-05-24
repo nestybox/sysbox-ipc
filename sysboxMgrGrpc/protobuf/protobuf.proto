@@ -45,7 +45,12 @@ message RegisterReq {
     string id = 1;
 }
 
+message MgrConfig {
+    bool aliasDns = 1;
+}
+
 message RegisterResp {
+    MgrConfig mgrConfig = 1;
 }
 
 message UnregisterReq {

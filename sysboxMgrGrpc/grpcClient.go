@@ -35,10 +35,10 @@ func connect() (*grpc.ClientConn, error) {
 }
 
 // Registers a container with sysbox-mgr
-func Register(id string) error {
+func Register(id string) (*ipcLib.MgrConfig, error) {
 	conn, err := connect()
 	if err != nil {
-		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+		return nil, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
 	}
 	defer conn.Close()
 
@@ -50,12 +50,16 @@ func Register(id string) error {
 		Id: id,
 	}
 
-	_, err = ch.Register(ctx, req)
+	resp, err := ch.Register(ctx, req)
 	if err != nil {
-		return fmt.Errorf("failed to invoke Register via grpc: %v", err)
+		return nil, fmt.Errorf("failed to invoke Register via grpc: %v", err)
 	}
 
-	return nil
+	config := &ipcLib.MgrConfig{
+		AliasDns: resp.MgrConfig.GetAliasDns(),
+	}
+
+	return config, nil
 }
 
 // Unregisters a container with sysbox-mgr

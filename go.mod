@@ -14,3 +14,5 @@ require (
 replace github.com/opencontainers/runc => ../sysbox-runc
 
 replace github.com/nestybox/libseccomp-golang => ../lib/seccomp-golang
+
+replace github.com/godbus/dbus => github.com/godbus/dbus/v5 v5.0.3
