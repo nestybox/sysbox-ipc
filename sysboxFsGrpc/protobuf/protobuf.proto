@@ -4,9 +4,7 @@
 
 syntax = "proto3";
 
-option java_multiple_files = true;
-option java_package = "io.grpc.sysbox.protobuf";
-option java_outer_classname = "protobuf";
+option go_package = ".;protobuf";
 
 import "google/protobuf/timestamp.proto";
 
