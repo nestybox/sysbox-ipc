@@ -14,7 +14,7 @@ import (
 	"os"
 	"path"
 
-	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/protobuf"
+	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/sysboxMgrProtobuf"
 	ipcLib "github.com/nestybox/sysbox-ipc/sysboxMgrLib"
 	"github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/opencontainers/runtime-spec/specs-go"

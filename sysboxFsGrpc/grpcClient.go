@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
-	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/protobuf"
+	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/sysboxFsProtobuf"
 	"google.golang.org/grpc"
 )
 

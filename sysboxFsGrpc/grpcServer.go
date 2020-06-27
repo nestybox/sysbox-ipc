@@ -12,7 +12,7 @@ import (
 	"os"
 	"path"
 
-	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/protobuf"
+	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/sysboxFsProtobuf"
 
 	"google.golang.org/grpc"
 	grpcCodes "google.golang.org/grpc/codes"

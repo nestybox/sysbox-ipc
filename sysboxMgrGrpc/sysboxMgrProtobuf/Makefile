@@ -25,13 +25,13 @@
 
 .PHONY: clean
 
-RUNC_FS_SRC := protobuf.proto
-RUNC_FS_PB := protobuf.pb.go
+RUNC_FS_SRC := sysboxMgrProtobuf.proto
+RUNC_FS_PB := sysboxMgrProtobuf.pb.go
 
 .DEFAULT: $(RUNC_FS_PB)
 
 $(RUNC_FS_PB): $(RUNC_FS_SRC)
-	protoc -I . -I /usr/local/include/ protobuf.proto --go_out=plugins=grpc:.
+	protoc -I . -I /usr/local/include/ sysboxMgrProtobuf.proto --go_out=plugins=grpc:.
 
 clean:
 	rm -f $(RUNC_FS_PB)
