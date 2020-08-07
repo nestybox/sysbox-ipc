@@ -1,6 +1,3 @@
-//
-// Copyright: (C) 2019 Nestybox Inc.  All rights reserved.
-//
 
 // Client-side gRPC interface for the sysbox manager daemon
 
