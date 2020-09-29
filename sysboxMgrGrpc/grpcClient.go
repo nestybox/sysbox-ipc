@@ -132,8 +132,11 @@ func ReqMounts(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipc
 	}
 	defer conn.Close()
 
+	// We don't use context timeout for this API because the time it takes to
+	// setup the mounts can be large, in particular for sys containers that come
+	// preloaded with heavy inner images and in machines where the load is high.
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// Convert []ipcLib.MountReqInfo -> []*pb.MountReqInfo
