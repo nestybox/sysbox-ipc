@@ -22,6 +22,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"os"
 	"time"
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/sysboxMgrProtobuf"
@@ -252,6 +253,47 @@ func ReqShiftfsMark(id string, rootfs string, mounts []configs.ShiftfsMount) err
 	}
 
 	return nil
+}
+
+// ReqFsState inquires sysbox-mgr for state to be written into container's
+// rootfs.
+func ReqFsState(id, rootfs string) ([]configs.FsEntry, error) {
+
+	conn, err := connect()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	req := &pb.FsStateReq{
+		Id:     id,
+		Rootfs: rootfs,
+	}
+
+	resp, err := ch.ReqFsState(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to invoke ReqFsState via grpc: %v", err)
+	}
+
+	fsEntries := []configs.FsEntry{}
+
+	// Convert []*pb.FsEntry -> []configs.FsEntry
+	for _, e := range resp.FsEntries {
+		entry := configs.NewFsEntry(
+			e.GetPath(),
+			e.GetDst(),
+			os.FileMode(e.GetMode()),
+			configs.FsEntryKind(e.GetKind()),
+		)
+
+		fsEntries = append(fsEntries, *entry)
+	}
+
+	return fsEntries, nil
 }
 
 // Pause notifies the sysbox-mgr that the container has been paused.

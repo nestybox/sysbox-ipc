@@ -44,6 +44,7 @@ type ServerCallbacks struct {
 	ReqMounts      func(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
 	PrepMounts     func(id string, uid, gid uint32, shiftUids bool, prepList []ipcLib.MountPrepInfo) error
 	ReqShiftfsMark func(id string, rootfs string, mounts []configs.ShiftfsMount) error
+	ReqFsState     func(id string, rootfs string) ([]configs.FsEntry, error)
 	Pause          func(id string) error
 }
 
@@ -223,6 +224,34 @@ func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq)
 	}
 
 	return &pb.ShiftfsMarkResp{}, nil
+}
+
+func (s *ServerStub) ReqFsState(
+	ctx context.Context,
+	req *pb.FsStateReq) (*pb.FsStateResp, error) {
+
+	if req == nil {
+		return &pb.FsStateResp{}, errors.New("invalid payload")
+	}
+
+	fsState, err := s.cb.ReqFsState(req.GetId(), req.GetRootfs())
+	if err != nil {
+		return nil, err
+	}
+
+	// convert []configs.FsEntry -> []*pb.FsEntry
+	pbFsEntries := []*pb.FsEntry{}
+	for _, e := range fsState {
+		pbe := &pb.FsEntry{
+			Kind: uint32(e.GetKind()),
+			Path: e.GetPath(),
+			Mode: uint32(e.GetMode()),
+			Dst:  e.GetDest(),
+		}
+		pbFsEntries = append(pbFsEntries, pbe)
+	}
+
+	return &pb.FsStateResp{FsEntries: pbFsEntries}, nil
 }
 
 func (s *ServerStub) Pause(ctx context.Context, req *pb.PauseReq) (*pb.PauseResp, error) {

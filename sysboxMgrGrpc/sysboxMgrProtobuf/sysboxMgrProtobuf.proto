@@ -31,6 +31,9 @@ service sysboxMgrStateChannel {
     // Shiftfs mark request
     rpc ReqShiftfsMark (ShiftfsMarkReq) returns (ShiftfsMarkResp) {}
 
+    // FsState request
+    rpc ReqFsState (FsStateReq) returns (FsStateResp) {}
+
     // Pause request
     rpc Pause (PauseReq) returns (PauseResp) {}
 }
@@ -137,6 +140,26 @@ message ShiftfsMarkReq {
 }
 
 message ShiftfsMarkResp {
+}
+
+//
+// FsState Requests
+//
+
+message FsStateReq {
+    string id = 1;
+    string rootfs = 2;
+}
+
+message FsEntry {
+    uint32 kind = 1;
+    string path = 2;
+    uint32 mode = 3;
+    string dst = 4;
+}
+
+message FsStateResp {
+    repeated FsEntry fsEntries = 1;
 }
 
 //
