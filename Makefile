@@ -2,7 +2,7 @@
 # sysbox-ipc Makefile
 #
 
-.PHONY: clean sysbox-ipc sysipc-grpc-fs-proto sysipc-grpc-mgr-proto validate list-packages
+.PHONY: clean sysbox-ipc sysipc-grpc-fs-proto sysipc-grpc-mgr-proto lint list-packages
 
 GO := go
 
@@ -17,8 +17,9 @@ sysipc-grpc-fs-proto:
 sysipc-grpc-mgr-proto:
 	$(MAKE) -C $(SYSIPC_GRPC_MGR_DIR)/sysboxMgrProtobuf
 
-validate:
-	script/validate-gofmt
+lint:
+	$(GO) vet $(allpackages)
+	$(GO) fmt $(allpackages)
 
 listpackages:
 	@echo $(allpackages)
