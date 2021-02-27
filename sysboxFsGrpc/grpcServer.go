@@ -117,6 +117,10 @@ func (s *Server) Init() error {
 	return nil
 }
 
+func (s *Server) GetAddr() string {
+	return sysFsGrpcSockAddr
+}
+
 // TODO: To be implemented in the future if needed.
 func (s *Server) CallbackRegister(c *Callback) {
 
