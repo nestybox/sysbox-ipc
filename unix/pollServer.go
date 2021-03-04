@@ -55,12 +55,25 @@ const (
 	DELETE_POLL_REQUEST
 )
 
-// Defines the poll action to execute.
+// Defines the poll action to execute for a given file-descriptor. Each
+// poll-server client allocates one of these objects to interact with the
+// poll-server.
 type pollAction struct {
-	fd          int32          // fd to poll
-	actionType  pollActionType // action type
-	waitReadCh  chan error     // channel to block on during read operations
-	waitWriteCh chan error     // channel to block on during write operations
+
+	// File-descriptor to poll().
+	fd int32
+
+	// Action the poll-server client is interested on: 'addition' or 'deletion'
+	// of the fd into/from the poll-event loop.
+	actionType pollActionType
+
+	// Channel on which the poll-server client waits during read-request
+	// operations.
+	waitReadCh chan error
+
+	// Channel on which the poll-server client waits during write-request
+	// operations.
+	waitWriteCh chan error
 }
 
 func newPollAction(fd int32, action pollActionType) *pollAction {
@@ -75,10 +88,19 @@ func newPollAction(fd int32, action pollActionType) *pollAction {
 // General pollserver struct.
 type PollServer struct {
 	sync.RWMutex
-	pollActionMap map[int32]*pollAction // 'fd' to 'pollAction' map
-	pollActionCh  chan *pollAction      // buffered channel through which pollActions arrive
-	wakeupReader  *os.File              // wake-up pipe -- writing end
-	wakeupWriter  *os.File              // wake-up pipe -- receiving end
+
+	// 'fd' to 'pollAction' map. This map holds one pollAction per poll-server
+	// client.
+	pollActionMap map[int32]*pollAction
+
+	// Buffered channel through which pollActions arrive.
+	pollActionCh chan *pollAction
+
+	// Wake-up pipe -- writing end
+	wakeupReader *os.File
+
+	// Wake-up pipe -- receiving end
+	wakeupWriter *os.File
 }
 
 func NewPollServer() (*PollServer, error) {
@@ -118,8 +140,16 @@ func (ps *PollServer) StartWaitRead(fd int32) error {
 		pa = newPollAction(fd, CREATE_POLL_REQUEST)
 	}
 
-	if err := ps.pushPollAction(pa); err != nil {
-		return err
+	// Inject poll-request action into poll-server's event-loop. Notice that we
+	// are explicitly verifying the action-type before injecting state into the
+	// poll-server's fsm, coz a 'delete' message could technically creep in if
+	// we are concurrently processing a poll-action 'addition' and a 'deletion',
+	// and if that were to happen, we could end up stalling client's goroutine
+	// for good.
+	if pa.actionType == CREATE_POLL_REQUEST {
+		if err := ps.pushPollAction(pa); err != nil {
+			return err
+		}
 	}
 
 	// Block till a POLLIN event is received for this fd.
@@ -138,8 +168,10 @@ func (ps *PollServer) StartWaitWrite(fd int32) error {
 		pa = newPollAction(fd, CREATE_POLL_REQUEST)
 	}
 
-	if err := ps.pushPollAction(pa); err != nil {
-		return err
+	if pa.actionType == CREATE_POLL_REQUEST {
+		if err := ps.pushPollAction(pa); err != nil {
+			return err
+		}
 	}
 
 	// Block till a POLLOUT event is received for this fd.
@@ -150,14 +182,17 @@ func (ps *PollServer) StartWaitWrite(fd int32) error {
 
 func (ps *PollServer) StopWait(fd int32) error {
 
-	ps.RLock()
+	// We are making a write operation below over the shared pollAction object,
+	// so let's acquire the write lock in this case.
+	ps.Lock()
 	pa, ok := ps.pollActionMap[fd]
-	ps.RUnlock()
 
 	if !ok {
+		ps.Unlock()
 		return fmt.Errorf("No poll-request to eliminate for fd %d", fd)
 	}
 	pa.actionType = DELETE_POLL_REQUEST
+	ps.Unlock()
 
 	if err := ps.pushPollAction(pa); err != nil {
 		return err
