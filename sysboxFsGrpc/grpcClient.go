@@ -30,6 +30,7 @@ import (
 // Container info passed by the client to the server across the grpc channel
 type ContainerData struct {
 	Id            string
+	Netns         string
 	InitPid       int32
 	Hostname      string
 	Ctime         time.Time
@@ -72,6 +73,7 @@ func containerDataToPbData(data *ContainerData) (*pb.ContainerData, error) {
 
 	return &pb.ContainerData{
 		Id:            data.Id,
+		Netns:         data.Netns,
 		InitPid:       data.InitPid,
 		Ctime:         pbTime,
 		UidFirst:      data.UidFirst,
@@ -91,6 +93,7 @@ func pbDatatoContainerData(pbdata *pb.ContainerData) (*ContainerData, error) {
 
 	return &ContainerData{
 		Id:            pbdata.Id,
+		Netns:         pbdata.Netns,
 		InitPid:       pbdata.InitPid,
 		Ctime:         cTime,
 		UidFirst:      pbdata.UidFirst,
