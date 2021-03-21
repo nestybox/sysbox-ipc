@@ -186,12 +186,21 @@ func (ps *PollServer) StopWait(fd int32) error {
 	// so let's acquire the write lock in this case.
 	ps.Lock()
 	pa, ok := ps.pollActionMap[fd]
-
+	// If no pollAction is encountered for this fd, then create a new one and
+	// tag it accordingly (delete op). This would typically not happen, as most
+	// of the times pollServer clients are in 'idle' state, and then a pollAction
+	// entry is registered in the pollServer DB. However, if the pollServer
+	// client were to be processing an incoming message by the time that this
+	// method is executed, there would be a time window where no pollAction would
+	// be found for this fd; in those cases we don't want to miss a pollAction
+	// 'delete' message. That's why we create a new pollAction entry below to
+	// alert the pollServer client (once it finishes processing the previous msg)
+	// of the need to stop listening on this fd.
 	if !ok {
-		ps.Unlock()
-		return fmt.Errorf("No poll-request to eliminate for fd %d", fd)
+		pa = newPollAction(fd, DELETE_POLL_REQUEST)
+	} else {
+		pa.actionType = DELETE_POLL_REQUEST
 	}
-	pa.actionType = DELETE_POLL_REQUEST
 	ps.Unlock()
 
 	if err := ps.pushPollAction(pa); err != nil {
