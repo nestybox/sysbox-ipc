@@ -74,6 +74,10 @@ type pollAction struct {
 	// Channel on which the poll-server client waits during write-request
 	// operations.
 	waitWriteCh chan error
+
+	// Channel on which the poll-server client waits for fds to be
+	// completely eliminated from the pollServer event-loop.
+	waitCloseCh chan error
 }
 
 func newPollAction(fd int32, action pollActionType) *pollAction {
@@ -82,6 +86,7 @@ func newPollAction(fd int32, action pollActionType) *pollAction {
 		actionType:  action,
 		waitReadCh:  make(chan error),
 		waitWriteCh: make(chan error),
+		waitCloseCh: make(chan error),
 	}
 }
 
@@ -133,26 +138,20 @@ func NewPollServer() (*PollServer, error) {
 func (ps *PollServer) StartWaitRead(fd int32) error {
 
 	ps.RLock()
-	pa, ok := ps.pollActionMap[fd]
+	_, ok := ps.pollActionMap[fd]
+	if ok {
+		ps.RUnlock()
+		return fmt.Errorf("Unexpected fd %d found in pollServer DB", fd)
+	}
 	ps.RUnlock()
 
-	if !ok {
-		pa = newPollAction(fd, CREATE_POLL_REQUEST)
+	pa := newPollAction(fd, CREATE_POLL_REQUEST)
+
+	if err := ps.pushPollAction(pa); err != nil {
+		return err
 	}
 
-	// Inject poll-request action into poll-server's event-loop. Notice that we
-	// are explicitly verifying the action-type before injecting state into the
-	// poll-server's fsm, coz a 'delete' message could technically creep in if
-	// we are concurrently processing a poll-action 'addition' and a 'deletion',
-	// and if that were to happen, we could end up stalling client's goroutine
-	// for good.
-	if pa.actionType == CREATE_POLL_REQUEST {
-		if err := ps.pushPollAction(pa); err != nil {
-			return err
-		}
-	}
-
-	// Block till a POLLIN event is received for this fd.
+	// Block till a POLLIN event (or any POLL-error) is received for this fd.
 	err := <-pa.waitReadCh
 
 	return err
@@ -161,20 +160,20 @@ func (ps *PollServer) StartWaitRead(fd int32) error {
 func (ps *PollServer) StartWaitWrite(fd int32) error {
 
 	ps.RLock()
-	pa, ok := ps.pollActionMap[fd]
+	_, ok := ps.pollActionMap[fd]
+	if ok {
+		ps.RUnlock()
+		return fmt.Errorf("Unexpected fd %d found in pollServer DB", fd)
+	}
 	ps.RUnlock()
 
-	if !ok {
-		pa = newPollAction(fd, CREATE_POLL_REQUEST)
+	pa := newPollAction(fd, CREATE_POLL_REQUEST)
+
+	if err := ps.pushPollAction(pa); err != nil {
+		return err
 	}
 
-	if pa.actionType == CREATE_POLL_REQUEST {
-		if err := ps.pushPollAction(pa); err != nil {
-			return err
-		}
-	}
-
-	// Block till a POLLOUT event is received for this fd.
+	// Block till a POLLOUT event (or any POLL-error) is received for this fd.
 	err := <-pa.waitWriteCh
 
 	return err
@@ -186,28 +185,26 @@ func (ps *PollServer) StopWait(fd int32) error {
 	// so let's acquire the write lock in this case.
 	ps.Lock()
 	pa, ok := ps.pollActionMap[fd]
-	// If no pollAction is encountered for this fd, then create a new one and
-	// tag it accordingly (delete op). This would typically not happen, as most
-	// of the times pollServer clients are in 'idle' state, and then a pollAction
-	// entry is registered in the pollServer DB. However, if the pollServer
-	// client were to be processing an incoming message by the time that this
-	// method is executed, there would be a time window where no pollAction would
-	// be found for this fd; in those cases we don't want to miss a pollAction
-	// 'delete' message. That's why we create a new pollAction entry below to
-	// alert the pollServer client (once it finishes processing the previous msg)
-	// of the need to stop listening on this fd.
 	if !ok {
-		pa = newPollAction(fd, DELETE_POLL_REQUEST)
-	} else {
-		pa.actionType = DELETE_POLL_REQUEST
+		ps.Unlock()
+		return nil
 	}
+
+	// Re-tag the existing pollAction as a "delete" one, so that the pollServer
+	// client that's currently waiting on the associated fd, can now wakeup from
+	// its nap.
+	pa.actionType = DELETE_POLL_REQUEST
 	ps.Unlock()
 
 	if err := ps.pushPollAction(pa); err != nil {
 		return err
 	}
 
-	return nil
+	// Wait for an ack from the pollServer's event-loop to confirm that the
+	// "delete" has been fully processed.
+	err := <-pa.waitCloseCh
+
+	return err
 }
 
 // Runs pollserver event-loop.
@@ -372,6 +369,8 @@ func (ps *PollServer) processPollWakeupEvent(pfd *unix.PollFd) error {
 		// nap.
 		closedFdError := fmt.Errorf("Interrupted poll operation: closed file-descriptor")
 		oldPa.waitReadCh <- closedFdError
+
+		oldPa.waitCloseCh <- nil
 	}
 
 	return nil
