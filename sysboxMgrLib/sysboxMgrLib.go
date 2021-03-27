@@ -24,6 +24,7 @@ package sysboxMgrLib
 
 type MgrConfig struct {
 	AliasDns bool
+	Userns   string
 }
 
 //
