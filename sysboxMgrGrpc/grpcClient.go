@@ -48,7 +48,7 @@ func connect() (*grpc.ClientConn, error) {
 }
 
 // Registers a container with sysbox-mgr
-func Register(id string) (*ipcLib.MgrConfig, error) {
+func Register(id, userns, netns string) (*ipcLib.MgrConfig, error) {
 	conn, err := connect()
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
@@ -60,7 +60,9 @@ func Register(id string) (*ipcLib.MgrConfig, error) {
 	defer cancel()
 
 	req := &pb.RegisterReq{
-		Id: id,
+		Id:     id,
+		Userns: userns,
+		Netns:  netns,
 	}
 
 	resp, err := ch.Register(ctx, req)
@@ -70,6 +72,7 @@ func Register(id string) (*ipcLib.MgrConfig, error) {
 
 	config := &ipcLib.MgrConfig{
 		AliasDns: resp.MgrConfig.GetAliasDns(),
+		Userns:   resp.MgrConfig.GetUserns(),
 	}
 
 	return config, nil

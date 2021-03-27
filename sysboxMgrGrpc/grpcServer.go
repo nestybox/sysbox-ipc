@@ -38,7 +38,7 @@ import (
 const sysMgrGrpcSockAddr = "/run/sysbox/sysmgr.sock"
 
 type ServerCallbacks struct {
-	Register       func(id string) (*ipcLib.MgrConfig, error)
+	Register       func(id, userns, netns string) (*ipcLib.MgrConfig, error)
 	Unregister     func(id string) error
 	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
 	ReqMounts      func(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
@@ -101,13 +101,14 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 		return &pb.RegisterResp{}, errors.New("invalid payload")
 	}
 
-	config, err := s.cb.Register(req.GetId())
+	config, err := s.cb.Register(req.GetId(), req.GetUserns(), req.GetNetns())
 	if err != nil {
 		return nil, err
 	}
 
 	mgrConfig := pb.MgrConfig{
 		AliasDns: config.AliasDns,
+		Userns:   config.Userns,
 	}
 
 	resp := &pb.RegisterResp{
