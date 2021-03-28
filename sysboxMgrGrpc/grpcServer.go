@@ -38,7 +38,8 @@ import (
 const sysMgrGrpcSockAddr = "/run/sysbox/sysmgr.sock"
 
 type ServerCallbacks struct {
-	Register       func(id, userns, netns string) (*ipcLib.MgrConfig, error)
+	Register       func(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
+	Update         func(updateInfo *ipcLib.UpdateInfo) error
 	Unregister     func(id string) error
 	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
 	ReqMounts      func(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
@@ -101,21 +102,51 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 		return &pb.RegisterResp{}, errors.New("invalid payload")
 	}
 
-	config, err := s.cb.Register(req.GetId(), req.GetUserns(), req.GetNetns())
+	regInfo := &ipcLib.RegistrationInfo{
+		Id:          req.GetId(),
+		Userns:      req.GetUserns(),
+		Netns:       req.GetNetns(),
+		UidMappings: protoIDMapToLinuxIDMap(req.GetUidMappings()),
+		GidMappings: protoIDMapToLinuxIDMap(req.GetGidMappings()),
+	}
+
+	config, err := s.cb.Register(regInfo)
 	if err != nil {
 		return nil, err
 	}
 
-	mgrConfig := pb.MgrConfig{
-		AliasDns: config.AliasDns,
-		Userns:   config.Userns,
+	mgrConfig := pb.ContainerConfig{
+		AliasDns:    config.AliasDns,
+		Userns:      config.Userns,
+		UidMappings: linuxIDMapToProtoIDMap(config.UidMappings),
+		GidMappings: linuxIDMapToProtoIDMap(config.GidMappings),
 	}
 
 	resp := &pb.RegisterResp{
-		MgrConfig: &mgrConfig,
+		ContainerConfig: &mgrConfig,
 	}
 
 	return resp, nil
+}
+
+func (s *ServerStub) Update(ctx context.Context, req *pb.UpdateReq) (*pb.UpdateResp, error) {
+	if req == nil {
+		return &pb.UpdateResp{}, errors.New("invalid payload")
+	}
+
+	updateInfo := &ipcLib.UpdateInfo{
+		Id:          req.GetId(),
+		Userns:      req.GetUserns(),
+		Netns:       req.GetNetns(),
+		UidMappings: protoIDMapToLinuxIDMap(req.GetUidMappings()),
+		GidMappings: protoIDMapToLinuxIDMap(req.GetGidMappings()),
+	}
+
+	if err := s.cb.Update(updateInfo); err != nil {
+		return nil, err
+	}
+
+	return &pb.UpdateResp{}, nil
 }
 
 func (s *ServerStub) Unregister(ctx context.Context, req *pb.UnregisterReq) (*pb.UnregisterResp, error) {
