@@ -48,7 +48,7 @@ func connect() (*grpc.ClientConn, error) {
 }
 
 // Registers a container with sysbox-mgr
-func Register(id, userns, netns string) (*ipcLib.MgrConfig, error) {
+func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error) {
 	conn, err := connect()
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
@@ -60,9 +60,11 @@ func Register(id, userns, netns string) (*ipcLib.MgrConfig, error) {
 	defer cancel()
 
 	req := &pb.RegisterReq{
-		Id:     id,
-		Userns: userns,
-		Netns:  netns,
+		Id:          regInfo.Id,
+		Userns:      regInfo.Userns,
+		Netns:       regInfo.Netns,
+		UidMappings: linuxIDMapToProtoIDMap(regInfo.UidMappings),
+		GidMappings: linuxIDMapToProtoIDMap(regInfo.GidMappings),
 	}
 
 	resp, err := ch.Register(ctx, req)
@@ -70,12 +72,43 @@ func Register(id, userns, netns string) (*ipcLib.MgrConfig, error) {
 		return nil, fmt.Errorf("failed to invoke Register via grpc: %v", err)
 	}
 
-	config := &ipcLib.MgrConfig{
-		AliasDns: resp.MgrConfig.GetAliasDns(),
-		Userns:   resp.MgrConfig.GetUserns(),
+	config := &ipcLib.ContainerConfig{
+		AliasDns:    resp.ContainerConfig.GetAliasDns(),
+		Userns:      resp.ContainerConfig.GetUserns(),
+		UidMappings: protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
+		GidMappings: protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
 	}
 
 	return config, nil
+}
+
+// Update a container info with sysbox-mgr
+func Update(updateInfo *ipcLib.UpdateInfo) error {
+
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	req := &pb.UpdateReq{
+		Id:          updateInfo.Id,
+		Userns:      updateInfo.Userns,
+		Netns:       updateInfo.Netns,
+		UidMappings: linuxIDMapToProtoIDMap(updateInfo.UidMappings),
+		GidMappings: linuxIDMapToProtoIDMap(updateInfo.GidMappings),
+	}
+
+	_, err = ch.Update(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke Update via grpc: %v", err)
+	}
+
+	return nil
 }
 
 // Unregisters a container with sysbox-mgr
@@ -322,4 +355,40 @@ func Pause(id string) error {
 	}
 
 	return nil
+}
+
+func linuxIDMapToProtoIDMap(idMappings []specs.LinuxIDMapping) []*pb.IDMapping {
+
+	convert := func(m specs.LinuxIDMapping) *pb.IDMapping {
+		return &pb.IDMapping{
+			ContainerID: uint32(m.ContainerID),
+			HostID:      uint32(m.HostID),
+			Size:        uint32(m.Size),
+		}
+	}
+
+	protoMappings := []*pb.IDMapping{}
+	for _, m := range idMappings {
+		protoMappings = append(protoMappings, convert(m))
+	}
+
+	return protoMappings
+}
+
+func protoIDMapToLinuxIDMap(idMappings []*pb.IDMapping) []specs.LinuxIDMapping {
+
+	convert := func(m *pb.IDMapping) specs.LinuxIDMapping {
+		return specs.LinuxIDMapping{
+			ContainerID: uint32(m.ContainerID),
+			HostID:      uint32(m.HostID),
+			Size:        uint32(m.Size),
+		}
+	}
+
+	linuxMappings := []specs.LinuxIDMapping{}
+	for _, m := range idMappings {
+		linuxMappings = append(linuxMappings, convert(m))
+	}
+
+	return linuxMappings
 }

@@ -18,13 +18,36 @@
 
 package sysboxMgrLib
 
-//
-// Sysbox-mgr config shared with other Sysbox components
-//
+import (
+	"github.com/opencontainers/runtime-spec/specs-go"
+)
 
-type MgrConfig struct {
-	AliasDns bool
-	Userns   string
+// Sysbox-mgr container registration info
+type RegistrationInfo struct {
+	Id          string
+	Userns      string
+	Netns       string
+	UidMappings []specs.LinuxIDMapping
+	GidMappings []specs.LinuxIDMapping
+}
+
+// Sysbox-mgr container update info
+type UpdateInfo struct {
+	Id          string
+	Userns      string
+	Netns       string
+	UidMappings []specs.LinuxIDMapping
+	GidMappings []specs.LinuxIDMapping
+}
+
+//
+// Sysbox-mgr mandated container configs (passed from sysbox-mgr -> sysbox-runc)
+//
+type ContainerConfig struct {
+	AliasDns    bool
+	Userns      string
+	UidMappings []specs.LinuxIDMapping
+	GidMappings []specs.LinuxIDMapping
 }
 
 //
