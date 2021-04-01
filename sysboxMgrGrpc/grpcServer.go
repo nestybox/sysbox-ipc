@@ -44,7 +44,7 @@ type ServerCallbacks struct {
 	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
 	ReqMounts      func(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
 	PrepMounts     func(id string, uid, gid uint32, shiftUids bool, prepList []ipcLib.MountPrepInfo) error
-	ReqShiftfsMark func(id string, rootfs string, mounts []configs.ShiftfsMount) error
+	ReqShiftfsMark func(id string, mounts []configs.ShiftfsMount) error
 	ReqFsState     func(id string, rootfs string) ([]configs.FsEntry, error)
 	Pause          func(id string) error
 }
@@ -251,7 +251,7 @@ func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq)
 		shiftfsMounts = append(shiftfsMounts, sm)
 	}
 
-	if err := s.cb.ReqShiftfsMark(req.GetId(), req.GetRootfs(), shiftfsMounts); err != nil {
+	if err := s.cb.ReqShiftfsMark(req.GetId(), shiftfsMounts); err != nil {
 		return nil, err
 	}
 

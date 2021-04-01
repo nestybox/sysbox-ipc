@@ -162,8 +162,7 @@ message ShiftfsMark {
 
 message ShiftfsMarkReq {
     string id = 1;
-    string rootfs = 2;
-    repeated ShiftfsMark shiftfsMarks = 3;
+    repeated ShiftfsMark shiftfsMarks = 2;
 }
 
 message ShiftfsMarkResp {
