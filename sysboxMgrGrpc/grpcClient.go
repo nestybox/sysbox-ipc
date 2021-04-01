@@ -253,9 +253,9 @@ func PrepMounts(id string, uid, gid uint32, shiftUids bool, prepList []ipcLib.Mo
 	return nil
 }
 
-// ReqShiftfsMark requests sysbox-mgr to perform shiftfs marking on the container's
-// rootfs and the given list of other mountpoints.
-func ReqShiftfsMark(id string, rootfs string, mounts []configs.ShiftfsMount) error {
+// ReqShiftfsMark requests sysbox-mgr to perform shiftfs marking on the given
+// list of container mountpoints.
+func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) error {
 
 	conn, err := connect()
 	if err != nil {
@@ -279,7 +279,6 @@ func ReqShiftfsMark(id string, rootfs string, mounts []configs.ShiftfsMount) err
 
 	req := &pb.ShiftfsMarkReq{
 		Id:           id,
-		Rootfs:       rootfs,
 		ShiftfsMarks: shiftfsMarks,
 	}
 
