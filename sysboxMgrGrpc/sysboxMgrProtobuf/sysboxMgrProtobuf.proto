@@ -115,8 +115,7 @@ message MountPrepReq {
     string id = 1;
     uint32 uid = 2;
     uint32 gid = 3;
-    bool shiftUids = 4;
-    repeated MountPrepInfo prepList = 5;
+    repeated MountPrepInfo prepList = 4;
 }
 
 message MountPrepResp {

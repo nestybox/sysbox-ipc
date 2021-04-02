@@ -43,7 +43,7 @@ type ServerCallbacks struct {
 	Unregister     func(id string) error
 	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
 	ReqMounts      func(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
-	PrepMounts     func(id string, uid, gid uint32, shiftUids bool, prepList []ipcLib.MountPrepInfo) error
+	PrepMounts     func(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error
 	ReqShiftfsMark func(id string, mounts []configs.ShiftfsMount) error
 	ReqFsState     func(id string, rootfs string) ([]configs.FsEntry, error)
 	Pause          func(id string) error
@@ -229,7 +229,7 @@ func (s *ServerStub) PrepMounts(ctx context.Context, req *pb.MountPrepReq) (*pb.
 		prepList = append(prepList, info)
 	}
 
-	if err := s.cb.PrepMounts(req.GetId(), req.GetUid(), req.GetGid(), req.GetShiftUids(), prepList); err != nil {
+	if err := s.cb.PrepMounts(req.GetId(), req.GetUid(), req.GetGid(), prepList); err != nil {
 		return nil, err
 	}
 
