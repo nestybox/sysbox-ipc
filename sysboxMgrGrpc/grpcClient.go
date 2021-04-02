@@ -216,7 +216,7 @@ func ReqMounts(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipc
 }
 
 // PrepMounts requests sysbox-mgr to prepare a mount source for use by a sys container.
-func PrepMounts(id string, uid, gid uint32, shiftUids bool, prepList []ipcLib.MountPrepInfo) error {
+func PrepMounts(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error {
 	conn, err := connect()
 	if err != nil {
 		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
@@ -238,11 +238,10 @@ func PrepMounts(id string, uid, gid uint32, shiftUids bool, prepList []ipcLib.Mo
 	}
 
 	req := &pb.MountPrepReq{
-		Id:        id,
-		Uid:       uid,
-		Gid:       gid,
-		ShiftUids: shiftUids,
-		PrepList:  pbPrepList,
+		Id:       id,
+		Uid:      uid,
+		Gid:      gid,
+		PrepList: pbPrepList,
 	}
 
 	_, err = ch.PrepMounts(ctx, req)
