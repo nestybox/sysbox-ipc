@@ -116,10 +116,11 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 	}
 
 	mgrConfig := pb.ContainerConfig{
-		AliasDns:    config.AliasDns,
-		Userns:      config.Userns,
-		UidMappings: linuxIDMapToProtoIDMap(config.UidMappings),
-		GidMappings: linuxIDMapToProtoIDMap(config.GidMappings),
+		AliasDns:          config.AliasDns,
+		BindMountUidShift: config.BindMountUidShift,
+		Userns:            config.Userns,
+		UidMappings:       linuxIDMapToProtoIDMap(config.UidMappings),
+		GidMappings:       linuxIDMapToProtoIDMap(config.GidMappings),
 	}
 
 	resp := &pb.RegisterResp{
