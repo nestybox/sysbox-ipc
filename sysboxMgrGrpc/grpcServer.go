@@ -43,7 +43,7 @@ type ServerCallbacks struct {
 	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
 	ReqMounts      func(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
 	PrepMounts     func(id string, uid, gid uint32, shiftUids bool, prepList []ipcLib.MountPrepInfo) error
-	ReqShiftfsMark func(id string, rootfs string, mounts []configs.ShiftfsMount) error
+	ReqShiftfsMark func(id string, rootfs string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error)
 	ReqFsState     func(id string, rootfs string) ([]configs.FsEntry, error)
 	Pause          func(id string) error
 }
@@ -210,20 +210,35 @@ func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq)
 	}
 
 	// Convert pb.ShiftfsMark to configs.ShiftfsMount
-	shiftfsMounts := []configs.ShiftfsMount{}
+	reqList := []configs.ShiftfsMount{}
 	for _, m := range req.GetShiftfsMarks() {
 		sm := configs.ShiftfsMount{
 			Source:   m.Source,
 			Readonly: m.Readonly,
 		}
-		shiftfsMounts = append(shiftfsMounts, sm)
+		reqList = append(reqList, sm)
 	}
 
-	if err := s.cb.ReqShiftfsMark(req.GetId(), req.GetRootfs(), shiftfsMounts); err != nil {
+	respList, err := s.cb.ReqShiftfsMark(req.GetId(), req.GetRootfs(), reqList)
+	if err != nil {
 		return nil, err
 	}
 
-	return &pb.ShiftfsMarkResp{}, nil
+	// Convert configs.ShiftfsMount to pb.ShiftfsMarkResp
+	markResp := []*pb.ShiftfsMark{}
+	for _, m := range respList {
+		sm := &pb.ShiftfsMark{
+			Source: m.Source,
+			Readonly: m.Readonly,
+		}
+		markResp = append(markResp, sm)
+	}
+
+	shiftfsMarkResp := &pb.ShiftfsMarkResp{
+		ShiftfsMarks: markResp,
+	}
+
+	return shiftfsMarkResp, nil
 }
 
 func (s *ServerStub) ReqFsState(
