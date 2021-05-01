@@ -253,13 +253,16 @@ func PrepMounts(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) err
 	return nil
 }
 
-// ReqShiftfsMark requests sysbox-mgr to perform shiftfs marking on the given
-// list of container mountpoints.
-func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) error {
+// ReqShiftfsMark requests sysbox-mgr to perform shiftfs marking on the
+// container's rootfs and the given mount list. Returns a list of paths where
+// the shiftfs marks where actually placed (need not be the same as the given
+// mount list). Refer to the sysbox-mgr shiftfs manager for more info.
+func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error) {
+	var resp *pb.ShiftfsMarkResp
 
 	conn, err := connect()
 	if err != nil {
-		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+		return nil, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
 	}
 	defer conn.Close()
 
@@ -268,26 +271,36 @@ func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) error {
 	defer cancel()
 
 	// convert configs.ShiftfsMount to grpc ShiftfsMark
-	shiftfsMarks := []*pb.ShiftfsMark{}
+	markReq := []*pb.ShiftfsMark{}
 	for _, m := range mounts {
 		sm := &pb.ShiftfsMark{
 			Source:   m.Source,
 			Readonly: m.Readonly,
 		}
-		shiftfsMarks = append(shiftfsMarks, sm)
+		markReq = append(markReq, sm)
 	}
 
 	req := &pb.ShiftfsMarkReq{
 		Id:           id,
-		ShiftfsMarks: shiftfsMarks,
+		ShiftfsMarks: markReq,
 	}
 
-	_, err = ch.ReqShiftfsMark(ctx, req)
+	resp, err = ch.ReqShiftfsMark(ctx, req)
 	if err != nil {
-		return fmt.Errorf("failed to invoke ReqShiftfsMark via grpc: %v", err)
+		return nil, fmt.Errorf("failed to invoke ReqShiftfsMark via grpc: %v", err)
 	}
 
-	return nil
+	// convert grpc ShiftfsMark to configs.ShiftfsMount
+	markpoints := []configs.ShiftfsMount{}
+	for _, m := range resp.GetShiftfsMarks() {
+		sm := configs.ShiftfsMount{
+			Source: m.Source,
+			Readonly: m.Readonly,
+		}
+		markpoints = append(markpoints, sm)
+	}
+
+	return markpoints, nil
 }
 
 // ReqFsState inquires sysbox-mgr for state to be written into container's

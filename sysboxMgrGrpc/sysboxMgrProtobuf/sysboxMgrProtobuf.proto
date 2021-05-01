@@ -166,6 +166,7 @@ message ShiftfsMarkReq {
 }
 
 message ShiftfsMarkResp {
+    repeated ShiftfsMark shiftfsMarks = 1;
 }
 
 //
