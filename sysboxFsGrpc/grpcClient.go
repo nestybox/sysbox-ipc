@@ -24,7 +24,10 @@ import (
 
 	"github.com/golang/protobuf/ptypes"
 	pb "github.com/nestybox/sysbox-ipc/sysboxFsGrpc/sysboxFsProtobuf"
+	"github.com/nestybox/sysbox-libs/formatter"
 	"google.golang.org/grpc"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Container info passed by the client to the server across the grpc channel
@@ -120,7 +123,7 @@ func SendContainerPreRegistration(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	pbData, err := containerDataToPbData(data)
@@ -130,7 +133,9 @@ func SendContainerPreRegistration(data *ContainerData) (err error) {
 
 	_, err = cntrChanIntf.ContainerPreRegistration(ctx, pbData)
 	if err != nil {
-		return fmt.Errorf("failed to register container with sysbox-fs: %v", err)
+		logrus.Warning("Container %s pre-registration error: %s",
+			formatter.ContainerID{data.Id}, err)
+		return fmt.Errorf("failed to pre-register container with sysbox-fs: %v", err)
 	}
 
 	return nil
@@ -149,7 +154,7 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	pbData, err := containerDataToPbData(data)
@@ -159,6 +164,8 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 
 	_, err = cntrChanIntf.ContainerRegistration(ctx, pbData)
 	if err != nil {
+		logrus.Warning("Container %s registration error: %s",
+			formatter.ContainerID{data.Id}, err)
 		return fmt.Errorf("failed to register container with sysbox-fs: %v", err)
 	}
 
@@ -178,7 +185,7 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	pbData, err := containerDataToPbData(data)
@@ -210,7 +217,7 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	pbData, err := containerDataToPbData(data)
@@ -220,6 +227,8 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 
 	_, err = cntrChanIntf.ContainerUpdate(ctx, pbData)
 	if err != nil {
+		logrus.Warning("Container %s update error: %s",
+			formatter.ContainerID{data.Id}, err)
 		return fmt.Errorf("failed to send container-update message to ",
 			"sysbox-fs: %v", err)
 	}
