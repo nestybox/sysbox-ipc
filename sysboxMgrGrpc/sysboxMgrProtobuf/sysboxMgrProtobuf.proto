@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-option go_package = ".;sysboxMgrProtobuf";
+option go_package = "./;sysboxMgrProtobuf";
 
 package protobuf;
 
