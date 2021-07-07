@@ -235,3 +235,26 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 
 	return nil
 }
+
+func GetMountpoint() (string, error) {
+	var mpResp *pb.MountpointResp
+
+	// Set up sysbox-fs pipeline.
+	conn, err := connect()
+	if err != nil {
+		return "", fmt.Errorf("failed to connect with sysbox-fs: %v", err)
+	}
+	defer conn.Close()
+
+	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	mpResp, err = cntrChanIntf.GetMountpoint(ctx, &pb.MountpointReq{})
+	if err != nil {
+		return "", fmt.Errorf("failed to get sysbox-fs mountpoint: %v", err)
+	}
+
+	return mpResp.GetMountpoint(), nil
+}
