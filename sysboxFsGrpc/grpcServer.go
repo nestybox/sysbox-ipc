@@ -45,6 +45,7 @@ const (
 	ContainerRegisterMessage
 	ContainerUnregisterMessage
 	ContainerUpdateMessage
+	GetMountpointMessage
 	MaxSupportedMessage
 )
 
@@ -65,9 +66,10 @@ type CallbacksMap = map[MessageType]Callback
 type Server struct {
 	Ctx       interface{}
 	Callbacks CallbacksMap
+	FuseMp    string
 }
 
-func NewServer(ctx interface{}, cb *CallbacksMap) *Server {
+func NewServer(ctx interface{}, cb *CallbacksMap, fuseMp string) *Server {
 
 	if cb == nil {
 		return nil
@@ -84,6 +86,7 @@ func NewServer(ctx interface{}, cb *CallbacksMap) *Server {
 	newServer := &Server{
 		Ctx:       ctx,
 		Callbacks: make(map[MessageType]Callback),
+		FuseMp:    fuseMp,
 	}
 
 	for ctype, cval := range *cb {
@@ -153,6 +156,11 @@ func (s *Server) ContainerUpdate(
 	ctx context.Context, data *pb.ContainerData) (*pb.Response, error) {
 
 	return s.executeCallback(ContainerUpdateMessage, data)
+}
+
+func (s *Server) GetMountpoint(
+	ctx context.Context, req *pb.MountpointReq) (*pb.MountpointResp, error) {
+	return &pb.MountpointResp{Mountpoint: s.FuseMp}, nil
 }
 
 func (s *Server) executeCallback(mtype MessageType,
