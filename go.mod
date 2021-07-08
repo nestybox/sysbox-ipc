@@ -15,4 +15,6 @@ replace github.com/opencontainers/runc => ../sysbox-runc
 
 replace github.com/nestybox/sysbox-libs/libseccomp-golang => ../sysbox-libs/seccomp-golang
 
+replace github.com/nestybox/sysbox-libs/formatter => ../sysbox-libs/formatter
+
 replace github.com/godbus/dbus => github.com/godbus/dbus/v5 v5.0.3
