@@ -35,3 +35,5 @@ $(RUNC_FS_PB): $(RUNC_FS_SRC)
 
 clean:
 	rm -f $(RUNC_FS_PB)
+
+distclean: clean
