@@ -28,6 +28,8 @@ clean:
 	$(MAKE) -C $(SYSIPC_GRPC_FS_DIR)/sysboxFsProtobuf clean
 	$(MAKE) -C $(SYSIPC_GRPC_MGR_DIR)/sysboxMgrProtobuf clean
 
+distclean: clean
+
 # memoize allpackages, so that it's executed only once and only if used
 _allpackages = $(shell $(GO) list ./... | grep -v vendor)
 allpackages = $(if $(__allpackages),,$(eval __allpackages := $$(_allpackages)))$(__allpackages)
