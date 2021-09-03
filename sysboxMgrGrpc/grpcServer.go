@@ -42,7 +42,7 @@ type ServerCallbacks struct {
 	Update         func(updateInfo *ipcLib.UpdateInfo) error
 	Unregister     func(id string) error
 	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
-	ReqMounts      func(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
+	ReqMounts      func(id, rootfs string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
 	PrepMounts     func(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error
 	ReqShiftfsMark func(id string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error)
 	ReqFsState     func(id string, rootfs string) ([]configs.FsEntry, error)
@@ -187,13 +187,14 @@ func (s *ServerStub) ReqMounts(ctx context.Context, req *pb.MountReq) (*pb.Mount
 	reqList := []ipcLib.MountReqInfo{}
 	for _, pbInfo := range req.ReqList {
 		info := ipcLib.MountReqInfo{
-			Kind: ipcLib.MntKind(pbInfo.GetKind()),
-			Dest: pbInfo.GetDest(),
+			Kind:      ipcLib.MntKind(pbInfo.GetKind()),
+			Dest:      pbInfo.GetDest(),
+			ShiftUids: pbInfo.GetShiftUids(),
 		}
 		reqList = append(reqList, info)
 	}
 
-	mounts, err := s.cb.ReqMounts(req.GetId(), req.GetRootfs(), req.GetUid(), req.GetGid(), req.GetShiftUids(), reqList)
+	mounts, err := s.cb.ReqMounts(req.GetId(), req.GetRootfs(), req.GetUid(), req.GetGid(), reqList)
 	if err != nil {
 		return nil, err
 	}
@@ -261,7 +262,7 @@ func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq)
 	markResp := []*pb.ShiftfsMark{}
 	for _, m := range respList {
 		sm := &pb.ShiftfsMark{
-			Source: m.Source,
+			Source:   m.Source,
 			Readonly: m.Readonly,
 		}
 		markResp = append(markResp, sm)
