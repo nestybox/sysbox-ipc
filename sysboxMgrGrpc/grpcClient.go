@@ -162,7 +162,7 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 }
 
 // ReqMounts requests the sysbox-mgr to setup sys container special mounts
-func ReqMounts(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error) {
+func ReqMounts(id, rootfs string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error) {
 
 	conn, err := connect()
 	if err != nil {
@@ -181,19 +181,19 @@ func ReqMounts(id, rootfs string, uid, gid uint32, shiftUids bool, reqList []ipc
 	pbReqList := []*pb.MountReqInfo{}
 	for _, info := range reqList {
 		pbInfo := &pb.MountReqInfo{
-			Kind: uint32(info.Kind),
-			Dest: info.Dest,
+			Kind:      uint32(info.Kind),
+			Dest:      info.Dest,
+			ShiftUids: info.ShiftUids,
 		}
 		pbReqList = append(pbReqList, pbInfo)
 	}
 
 	req := &pb.MountReq{
-		Id:        id,
-		Rootfs:    rootfs,
-		Uid:       uid,
-		Gid:       gid,
-		ShiftUids: shiftUids,
-		ReqList:   pbReqList,
+		Id:      id,
+		Rootfs:  rootfs,
+		Uid:     uid,
+		Gid:     gid,
+		ReqList: pbReqList,
 	}
 
 	resp, err := ch.ReqMounts(ctx, req)
@@ -294,7 +294,7 @@ func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) ([]configs.Shiftfs
 	markpoints := []configs.ShiftfsMount{}
 	for _, m := range resp.GetShiftfsMarks() {
 		sm := configs.ShiftfsMount{
-			Source: m.Source,
+			Source:   m.Source,
 			Readonly: m.Readonly,
 		}
 		markpoints = append(markpoints, sm)

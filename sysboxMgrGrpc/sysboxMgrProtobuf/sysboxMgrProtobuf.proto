@@ -129,6 +129,7 @@ message MountPrepResp {
 message MountReqInfo {
     uint32 kind = 1;
     string dest = 2;
+    bool shiftUids = 3;
 }
 
 message MountReq {
@@ -136,8 +137,7 @@ message MountReq {
     string rootfs = 2;
     uint32 uid = 3;
     uint32 gid = 4;
-    bool shiftUids = 5;
-    repeated MountReqInfo reqList = 6;
+    repeated MountReqInfo reqList = 5;
 }
 
 message Mount {

@@ -90,6 +90,7 @@ func (k MntKind) String() string {
 }
 
 type MountReqInfo struct {
-	Kind MntKind
-	Dest string
+	Kind      MntKind
+	Dest      string
+	ShiftUids bool
 }
