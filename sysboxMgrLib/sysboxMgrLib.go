@@ -65,8 +65,9 @@ type MntKind int
 const (
 	MntVarLibDocker MntKind = iota
 	MntVarLibKubelet
-	MntVarLibK3s
 	MntVarLibK0s
+	MntVarLibRancherK3s
+	MntVarLibRancherRke2
 	MntVarLibContainerdOvfs
 	MntUsrSrcLinuxHdr
 )
@@ -79,10 +80,12 @@ func (k MntKind) String() string {
 		str = "var-lib-docker"
 	case MntVarLibKubelet:
 		str = "var-lib-kubelet"
-	case MntVarLibK3s:
-		str = "var-lib-rancher-k3s"
 	case MntVarLibK0s:
 		str = "var-lib-k0s"
+	case MntVarLibRancherK3s:
+		str = "var-lib-rancher-k3s"
+	case MntVarLibRancherRke2:
+		str = "var-lib-rancher-rke2"
 	case MntVarLibContainerdOvfs:
 		str = "var-lib-containerd-ovfs"
 	case MntUsrSrcLinuxHdr:
