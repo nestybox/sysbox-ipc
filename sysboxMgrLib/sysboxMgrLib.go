@@ -68,6 +68,7 @@ const (
 	MntVarLibK0s
 	MntVarLibRancherK3s
 	MntVarLibRancherRke2
+	MntVarLibBuildkit
 	MntVarLibContainerdOvfs
 	MntUsrSrcLinuxHdr
 )
@@ -86,6 +87,8 @@ func (k MntKind) String() string {
 		str = "var-lib-rancher-k3s"
 	case MntVarLibRancherRke2:
 		str = "var-lib-rancher-rke2"
+	case MntVarLibBuildkit:
+		str = "var-lib-buildkit"
 	case MntVarLibContainerdOvfs:
 		str = "var-lib-containerd-ovfs"
 	case MntUsrSrcLinuxHdr:
