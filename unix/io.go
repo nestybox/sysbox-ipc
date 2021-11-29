@@ -30,13 +30,13 @@ import (
 
 type Server struct {
 	listener net.UnixListener
-	handler  func(*net.UnixConn) error
+	handler  func(*net.UnixConn)
 }
 
 // NewServer constructs a unix-server to handle inbound connections made to the
 // 'addr' unix-socket. Upon establishment, the connection will be handled by the
 // 'func' closure passed as parameter.
-func NewServer(addr string, handler func(*net.UnixConn) error) (*Server, error) {
+func NewServer(addr string, handler func(*net.UnixConn)) (*Server, error) {
 
 	if err := os.RemoveAll(addr); err != nil {
 		logrus.Errorf("Unable to remove address %v (%v).", addr, err)
