@@ -66,6 +66,7 @@ const (
 	MntVarLibDocker MntKind = iota
 	MntVarLibKubelet
 	MntVarLibK3s
+	MntVarLibK0s
 	MntVarLibContainerdOvfs
 	MntUsrSrcLinuxHdr
 )
@@ -80,6 +81,8 @@ func (k MntKind) String() string {
 		str = "var-lib-kubelet"
 	case MntVarLibK3s:
 		str = "var-lib-rancher-k3s"
+	case MntVarLibK0s:
+		str = "var-lib-k0s"
 	case MntVarLibContainerdOvfs:
 		str = "var-lib-containerd-ovfs"
 	case MntUsrSrcLinuxHdr:
