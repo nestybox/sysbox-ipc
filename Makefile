@@ -17,6 +17,10 @@ sysipc-grpc-fs-proto:
 sysipc-grpc-mgr-proto:
 	$(MAKE) -C $(SYSIPC_GRPC_MGR_DIR)/sysboxMgrProtobuf
 
+# Note: we must build the protobuf before go mod tidy
+gomod-tidy: sysipc-grpc-fs-proto sysipc-grpc-mgr-proto
+	$(GO) mod tidy
+
 lint:
 	$(GO) vet $(allpackages)
 	$(GO) fmt $(allpackages)
