@@ -61,10 +61,11 @@ message RegisterReq {
 
 message ContainerConfig {
     bool aliasDns = 1;
-    bool bindMountUidShift = 2;
-    string userns = 3;
-    repeated IDMapping uidMappings = 4;
-    repeated IDMapping gidMappings = 5;
+    bool noShiftfs = 2;
+    bool noIDMappedMount = 3;
+    string userns = 4;
+    repeated IDMapping uidMappings = 5;
+    repeated IDMapping gidMappings = 6;
 }
 
 message RegisterResp {

@@ -73,11 +73,12 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 	}
 
 	config := &ipcLib.ContainerConfig{
-		AliasDns:          resp.ContainerConfig.GetAliasDns(),
-		BindMountUidShift: resp.ContainerConfig.GetBindMountUidShift(),
-		Userns:            resp.ContainerConfig.GetUserns(),
-		UidMappings:       protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
-		GidMappings:       protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
+		AliasDns:        resp.ContainerConfig.GetAliasDns(),
+		NoShiftfs:       resp.ContainerConfig.GetNoShiftfs(),
+		NoIDMappedMount: resp.ContainerConfig.GetNoIDMappedMount(),
+		Userns:          resp.ContainerConfig.GetUserns(),
+		UidMappings:     protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
+		GidMappings:     protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
 	}
 
 	return config, nil
