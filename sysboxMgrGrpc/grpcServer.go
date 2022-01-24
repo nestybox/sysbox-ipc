@@ -47,6 +47,7 @@ type ServerCallbacks struct {
 	ReqShiftfsMark func(id string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error)
 	ReqFsState     func(id string, rootfs string) ([]configs.FsEntry, error)
 	Pause          func(id string) error
+	CloneRootfs    func(id, rootfs string) (string, error)
 }
 
 type ServerStub struct {
@@ -314,4 +315,17 @@ func (s *ServerStub) Pause(ctx context.Context, req *pb.PauseReq) (*pb.PauseResp
 	}
 
 	return &pb.PauseResp{}, nil
+}
+
+func (s *ServerStub) ReqCloneRootfs(ctx context.Context, req *pb.CloneRootfsReq) (*pb.CloneRootfsResp, error) {
+	if req == nil {
+		return &pb.CloneRootfsResp{}, errors.New("invalid payload")
+	}
+
+	rootfs, err := s.cb.CloneRootfs(req.GetId(), req.GetRootfs())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.CloneRootfsResp{Rootfs: rootfs}, nil
 }

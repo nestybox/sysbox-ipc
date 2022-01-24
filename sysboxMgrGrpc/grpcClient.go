@@ -405,3 +405,30 @@ func protoIDMapToLinuxIDMap(idMappings []*pb.IDMapping) []specs.LinuxIDMapping {
 
 	return linuxMappings
 }
+
+// ReqCloneRootfs requests the sysbox-mgr to clone the container's rootfs.
+// It returns the path to the new rootfs.
+func ReqCloneRootfs(id, rootfs string) (string, error) {
+
+	conn, err := connect()
+	if err != nil {
+		return "", fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	req := &pb.CloneRootfsReq{
+		Id:     id,
+		Rootfs: rootfs,
+	}
+
+	resp, err := ch.ReqCloneRootfs(ctx, req)
+	if err != nil {
+		return "", fmt.Errorf("failed to invoke ReqCloneRootfs via grpc: %v", err)
+	}
+
+	return resp.GetRootfs(), nil
+}
