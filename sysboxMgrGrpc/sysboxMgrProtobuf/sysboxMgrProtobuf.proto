@@ -39,6 +39,9 @@ service sysboxMgrStateChannel {
 
     // Pause request
     rpc Pause (PauseReq) returns (PauseResp) {}
+
+    // Clone rootfs request
+    rpc ReqCloneRootfs (CloneRootfsReq) returns (CloneRootfsResp) {}
 }
 
 //
@@ -199,4 +202,17 @@ message PauseReq {
 }
 
 message PauseResp {
+}
+
+//
+// CloneRootfs request
+//
+
+message CloneRootfsReq {
+    string id = 1;
+    string rootfs = 2;
+}
+
+message CloneRootfsResp {
+    string rootfs = 1;
 }
