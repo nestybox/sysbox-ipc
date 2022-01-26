@@ -38,16 +38,18 @@ import (
 const sysMgrGrpcSockAddr = "/run/sysbox/sysmgr.sock"
 
 type ServerCallbacks struct {
-	Register       func(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
-	Update         func(updateInfo *ipcLib.UpdateInfo) error
-	Unregister     func(id string) error
-	SubidAlloc     func(id string, size uint64) (uint32, uint32, error)
-	ReqMounts      func(id, rootfs string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
-	PrepMounts     func(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error
-	ReqShiftfsMark func(id string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error)
-	ReqFsState     func(id string, rootfs string) ([]configs.FsEntry, error)
-	Pause          func(id string) error
-	CloneRootfs    func(id, rootfs string) (string, error)
+	Register                func(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
+	Update                  func(updateInfo *ipcLib.UpdateInfo) error
+	Unregister              func(id string) error
+	SubidAlloc              func(id string, size uint64) (uint32, uint32, error)
+	ReqMounts               func(id, rootfs string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
+	PrepMounts              func(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error
+	ReqShiftfsMark          func(id string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error)
+	ReqFsState              func(id string, rootfs string) ([]configs.FsEntry, error)
+	Pause                   func(id string) error
+	CloneRootfs             func(id, rootfs string) (string, error)
+	ChownClonedRootfs       func(id string, uidOffset, gidOffset int32) error
+	RevertClonedRootfsChown func(id string) error
 }
 
 type ServerStub struct {
@@ -328,4 +330,30 @@ func (s *ServerStub) ReqCloneRootfs(ctx context.Context, req *pb.CloneRootfsReq)
 	}
 
 	return &pb.CloneRootfsResp{Rootfs: rootfs}, nil
+}
+
+func (s *ServerStub) ChownClonedRootfs(ctx context.Context, req *pb.ChownClonedRootfsReq) (*pb.ChownClonedRootfsResp, error) {
+	if req == nil {
+		return &pb.ChownClonedRootfsResp{}, errors.New("invalid payload")
+	}
+
+	err := s.cb.ChownClonedRootfs(req.GetId(), req.GetUidOffset(), req.GetGidOffset())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ChownClonedRootfsResp{}, nil
+}
+
+func (s *ServerStub) RevertClonedRootfsChown(ctx context.Context, req *pb.RevertClonedRootfsChownReq) (*pb.RevertClonedRootfsChownResp, error) {
+	if req == nil {
+		return &pb.RevertClonedRootfsChownResp{}, errors.New("invalid payload")
+	}
+
+	err := s.cb.RevertClonedRootfsChown(req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.RevertClonedRootfsChownResp{}, nil
 }
