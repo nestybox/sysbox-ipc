@@ -432,3 +432,55 @@ func ReqCloneRootfs(id, rootfs string) (string, error) {
 
 	return resp.GetRootfs(), nil
 }
+
+// ChownClonedRootfs requests the sysbox-mgr to chown a cloned rootfs.
+func ChownClonedRootfs(id string, uidOffset, gidOffset int32) error {
+
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	req := &pb.ChownClonedRootfsReq{
+		Id:        id,
+		UidOffset: uidOffset,
+		GidOffset: gidOffset,
+	}
+
+	_, err = ch.ChownClonedRootfs(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke ChownClonedRootfs via grpc: %v", err)
+	}
+
+	return nil
+}
+
+// RevertClonedRootfsChown requests the sysbox-mgr to revert the chown of a cloned rootfs.
+func RevertClonedRootfsChown(id string) error {
+
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	req := &pb.RevertClonedRootfsChownReq{
+		Id: id,
+	}
+
+	_, err = ch.RevertClonedRootfsChown(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke RevertClonedRootfsChown via grpc: %v", err)
+	}
+
+	return nil
+}

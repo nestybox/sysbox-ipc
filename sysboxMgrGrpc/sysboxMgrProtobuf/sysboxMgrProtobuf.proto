@@ -42,6 +42,12 @@ service sysboxMgrStateChannel {
 
     // Clone rootfs request
     rpc ReqCloneRootfs (CloneRootfsReq) returns (CloneRootfsResp) {}
+
+    // Chown cloned rootfs request
+    rpc ChownClonedRootfs (ChownClonedRootfsReq) returns (ChownClonedRootfsResp) {}
+
+    // Revert cloned rootfs chown
+    rpc RevertClonedRootfsChown (RevertClonedRootfsChownReq) returns (RevertClonedRootfsChownResp) {}
 }
 
 //
@@ -215,4 +221,28 @@ message CloneRootfsReq {
 
 message CloneRootfsResp {
     string rootfs = 1;
+}
+
+//
+// ChownClonedRootfs request
+//
+
+message ChownClonedRootfsReq {
+    string id = 1;
+    int32 uidOffset = 2;
+    int32 gidOffset = 3;
+}
+
+message ChownClonedRootfsResp {
+}
+
+//
+// RevertClonedRootfsChown request
+//
+
+message RevertClonedRootfsChownReq {
+    string id = 1;
+}
+
+message RevertClonedRootfsChownResp {
 }
