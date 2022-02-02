@@ -42,12 +42,12 @@ type ServerCallbacks struct {
 	Update                  func(updateInfo *ipcLib.UpdateInfo) error
 	Unregister              func(id string) error
 	SubidAlloc              func(id string, size uint64) (uint32, uint32, error)
-	ReqMounts               func(id, rootfs string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
+	ReqMounts               func(id string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
 	PrepMounts              func(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error
 	ReqShiftfsMark          func(id string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error)
 	ReqFsState              func(id string, rootfs string) ([]configs.FsEntry, error)
 	Pause                   func(id string) error
-	CloneRootfs             func(id, rootfs string) (string, error)
+	CloneRootfs             func(id string) (string, error)
 	ChownClonedRootfs       func(id string, uidOffset, gidOffset int32) error
 	RevertClonedRootfsChown func(id string) error
 }
@@ -107,6 +107,7 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 
 	regInfo := &ipcLib.RegistrationInfo{
 		Id:          req.GetId(),
+		Rootfs:      req.GetRootfs(),
 		Userns:      req.GetUserns(),
 		Netns:       req.GetNetns(),
 		UidMappings: protoIDMapToLinuxIDMap(req.GetUidMappings()),
@@ -198,7 +199,7 @@ func (s *ServerStub) ReqMounts(ctx context.Context, req *pb.MountReq) (*pb.Mount
 		reqList = append(reqList, info)
 	}
 
-	mounts, err := s.cb.ReqMounts(req.GetId(), req.GetRootfs(), req.GetUid(), req.GetGid(), reqList)
+	mounts, err := s.cb.ReqMounts(req.GetId(), req.GetUid(), req.GetGid(), reqList)
 	if err != nil {
 		return nil, err
 	}
@@ -324,7 +325,7 @@ func (s *ServerStub) ReqCloneRootfs(ctx context.Context, req *pb.CloneRootfsReq)
 		return &pb.CloneRootfsResp{}, errors.New("invalid payload")
 	}
 
-	rootfs, err := s.cb.CloneRootfs(req.GetId(), req.GetRootfs())
+	rootfs, err := s.cb.CloneRootfs(req.GetId())
 	if err != nil {
 		return nil, err
 	}

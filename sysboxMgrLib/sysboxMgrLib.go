@@ -25,6 +25,7 @@ import (
 // Sysbox-mgr container registration info
 type RegistrationInfo struct {
 	Id          string
+	Rootfs      string
 	Userns      string
 	Netns       string
 	UidMappings []specs.LinuxIDMapping
