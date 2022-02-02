@@ -62,10 +62,11 @@ message IDMapping {
 
 message RegisterReq {
     string id = 1;
-    string userns = 2;
-    string netns = 3;
-    repeated IDMapping uidMappings = 4;
-    repeated IDMapping gidMappings = 5;
+    string rootfs = 2;
+    string userns = 3;
+    string netns = 4;
+    repeated IDMapping uidMappings = 5;
+    repeated IDMapping gidMappings = 6;
 }
 
 message ContainerConfig {
@@ -144,10 +145,9 @@ message MountReqInfo {
 
 message MountReq {
     string id = 1;
-    string rootfs = 2;
-    uint32 uid = 3;
-    uint32 gid = 4;
-    repeated MountReqInfo reqList = 5;
+    uint32 uid = 2;
+    uint32 gid = 3;
+    repeated MountReqInfo reqList = 4;
 }
 
 message Mount {
@@ -216,7 +216,6 @@ message PauseResp {
 
 message CloneRootfsReq {
     string id = 1;
-    string rootfs = 2;
 }
 
 message CloneRootfsResp {

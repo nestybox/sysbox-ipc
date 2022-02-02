@@ -61,6 +61,7 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 
 	req := &pb.RegisterReq{
 		Id:          regInfo.Id,
+		Rootfs:      regInfo.Rootfs,
 		Userns:      regInfo.Userns,
 		Netns:       regInfo.Netns,
 		UidMappings: linuxIDMapToProtoIDMap(regInfo.UidMappings),
@@ -163,7 +164,7 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 }
 
 // ReqMounts requests the sysbox-mgr to setup sys container special mounts
-func ReqMounts(id, rootfs string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error) {
+func ReqMounts(id string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error) {
 
 	conn, err := connect()
 	if err != nil {
@@ -191,7 +192,6 @@ func ReqMounts(id, rootfs string, uid, gid uint32, reqList []ipcLib.MountReqInfo
 
 	req := &pb.MountReq{
 		Id:      id,
-		Rootfs:  rootfs,
 		Uid:     uid,
 		Gid:     gid,
 		ReqList: pbReqList,
@@ -408,7 +408,7 @@ func protoIDMapToLinuxIDMap(idMappings []*pb.IDMapping) []specs.LinuxIDMapping {
 
 // ReqCloneRootfs requests the sysbox-mgr to clone the container's rootfs.
 // It returns the path to the new rootfs.
-func ReqCloneRootfs(id, rootfs string) (string, error) {
+func ReqCloneRootfs(id string) (string, error) {
 
 	conn, err := connect()
 	if err != nil {
@@ -421,8 +421,7 @@ func ReqCloneRootfs(id, rootfs string) (string, error) {
 	defer cancel()
 
 	req := &pb.CloneRootfsReq{
-		Id:     id,
-		Rootfs: rootfs,
+		Id: id,
 	}
 
 	resp, err := ch.ReqCloneRootfs(ctx, req)
