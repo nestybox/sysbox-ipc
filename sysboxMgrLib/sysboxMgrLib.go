@@ -48,6 +48,7 @@ type ContainerConfig struct {
 	AliasDns        bool
 	NoShiftfs       bool
 	NoIDMappedMount bool
+	NoRootfsCloning bool
 	Userns          string
 	UidMappings     []specs.LinuxIDMapping
 	GidMappings     []specs.LinuxIDMapping
