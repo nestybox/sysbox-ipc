@@ -123,6 +123,7 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 		AliasDns:        config.AliasDns,
 		NoShiftfs:       config.NoShiftfs,
 		NoIDMappedMount: config.NoIDMappedMount,
+		NoRootfsCloning: config.NoRootfsCloning,
 		Userns:          config.Userns,
 		UidMappings:     linuxIDMapToProtoIDMap(config.UidMappings),
 		GidMappings:     linuxIDMapToProtoIDMap(config.GidMappings),

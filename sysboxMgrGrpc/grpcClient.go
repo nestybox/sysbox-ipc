@@ -77,6 +77,7 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 		AliasDns:        resp.ContainerConfig.GetAliasDns(),
 		NoShiftfs:       resp.ContainerConfig.GetNoShiftfs(),
 		NoIDMappedMount: resp.ContainerConfig.GetNoIDMappedMount(),
+		NoRootfsCloning: resp.ContainerConfig.GetNoRootfsCloning(),
 		Userns:          resp.ContainerConfig.GetUserns(),
 		UidMappings:     protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
 		GidMappings:     protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
