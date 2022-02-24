@@ -74,9 +74,10 @@ message ContainerConfig {
     bool noShiftfs = 2;
     bool noIDMappedMount = 3;
     bool noRootfsCloning = 4;
-    string userns = 5;
-    repeated IDMapping uidMappings = 6;
-    repeated IDMapping gidMappings = 7;
+    bool ignoreSysfsChown = 5;
+    string userns = 6;
+    repeated IDMapping uidMappings = 7;
+    repeated IDMapping gidMappings = 8;
 }
 
 message RegisterResp {

@@ -45,13 +45,14 @@ type UpdateInfo struct {
 // Sysbox-mgr mandated container configs (passed from sysbox-mgr -> sysbox-runc)
 //
 type ContainerConfig struct {
-	AliasDns        bool
-	NoShiftfs       bool
-	NoIDMappedMount bool
-	NoRootfsCloning bool
-	Userns          string
-	UidMappings     []specs.LinuxIDMapping
-	GidMappings     []specs.LinuxIDMapping
+	AliasDns         bool
+	NoShiftfs        bool
+	NoIDMappedMount  bool
+	NoRootfsCloning  bool
+	IgnoreSysfsChown bool
+	Userns           string
+	UidMappings      []specs.LinuxIDMapping
+	GidMappings      []specs.LinuxIDMapping
 }
 
 //
