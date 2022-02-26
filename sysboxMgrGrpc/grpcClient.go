@@ -74,14 +74,15 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 	}
 
 	config := &ipcLib.ContainerConfig{
-		AliasDns:         resp.ContainerConfig.GetAliasDns(),
-		NoShiftfs:        resp.ContainerConfig.GetNoShiftfs(),
-		NoIDMappedMount:  resp.ContainerConfig.GetNoIDMappedMount(),
-		NoRootfsCloning:  resp.ContainerConfig.GetNoRootfsCloning(),
-		IgnoreSysfsChown: resp.ContainerConfig.GetIgnoreSysfsChown(),
-		Userns:           resp.ContainerConfig.GetUserns(),
-		UidMappings:      protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
-		GidMappings:      protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
+		AliasDns:          resp.ContainerConfig.GetAliasDns(),
+		NoShiftfs:         resp.ContainerConfig.GetNoShiftfs(),
+		NoIDMappedMount:   resp.ContainerConfig.GetNoIDMappedMount(),
+		NoRootfsCloning:   resp.ContainerConfig.GetNoRootfsCloning(),
+		IgnoreSysfsChown:  resp.ContainerConfig.GetIgnoreSysfsChown(),
+		AllowTrustedXattr: resp.ContainerConfig.GetAllowTrustedXattr(),
+		Userns:            resp.ContainerConfig.GetUserns(),
+		UidMappings:       protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
+		GidMappings:       protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
 	}
 
 	return config, nil
