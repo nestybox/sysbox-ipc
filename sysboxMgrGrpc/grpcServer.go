@@ -126,6 +126,7 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 		NoRootfsCloning:   config.NoRootfsCloning,
 		IgnoreSysfsChown:  config.IgnoreSysfsChown,
 		AllowTrustedXattr: config.AllowTrustedXattr,
+		HonorCaps:         config.HonorCaps,
 		Userns:            config.Userns,
 		UidMappings:       linuxIDMapToProtoIDMap(config.UidMappings),
 		GidMappings:       linuxIDMapToProtoIDMap(config.GidMappings),

@@ -76,9 +76,10 @@ message ContainerConfig {
     bool noRootfsCloning = 4;
     bool ignoreSysfsChown = 5;
     bool allowTrustedXattr = 6;
-    string userns = 7;
-    repeated IDMapping uidMappings = 8;
-    repeated IDMapping gidMappings = 9;
+    bool honorCaps = 7;
+    string userns = 8;
+    repeated IDMapping uidMappings = 9;
+    repeated IDMapping gidMappings = 10;
 }
 
 message RegisterResp {

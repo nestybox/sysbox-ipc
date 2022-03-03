@@ -51,6 +51,7 @@ type ContainerConfig struct {
 	NoRootfsCloning   bool
 	IgnoreSysfsChown  bool
 	AllowTrustedXattr bool
+	HonorCaps         bool
 	Userns            string
 	UidMappings       []specs.LinuxIDMapping
 	GidMappings       []specs.LinuxIDMapping
