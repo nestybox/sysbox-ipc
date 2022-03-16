@@ -56,7 +56,7 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.RegisterReq{
@@ -99,7 +99,7 @@ func Update(updateInfo *ipcLib.UpdateInfo) error {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.UpdateReq{
@@ -127,7 +127,7 @@ func Unregister(id string) error {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.UnregisterReq{
@@ -151,7 +151,7 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.SubidAllocReq{
@@ -230,7 +230,7 @@ func PrepMounts(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) err
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	// Convert []ipcLib.MountPrepInfo -> []*pb.MountPrepInfo
@@ -272,7 +272,7 @@ func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) ([]configs.Shiftfs
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	// convert configs.ShiftfsMount to grpc ShiftfsMark
@@ -319,7 +319,7 @@ func ReqFsState(id, rootfs string) ([]configs.FsEntry, error) {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.FsStateReq{
@@ -359,7 +359,7 @@ func Pause(id string) error {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.PauseReq{
@@ -421,7 +421,7 @@ func ReqCloneRootfs(id string) (string, error) {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.CloneRootfsReq{
@@ -446,7 +446,7 @@ func ChownClonedRootfs(id string, uidOffset, gidOffset int32) error {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.ChownClonedRootfsReq{
@@ -473,7 +473,7 @@ func RevertClonedRootfsChown(id string) error {
 	defer conn.Close()
 
 	ch := pb.NewSysboxMgrStateChannelClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 	defer cancel()
 
 	req := &pb.RevertClonedRootfsChownReq{
