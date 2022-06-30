@@ -81,6 +81,7 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 		IgnoreSysfsChown:  resp.ContainerConfig.GetIgnoreSysfsChown(),
 		AllowTrustedXattr: resp.ContainerConfig.GetAllowTrustedXattr(),
 		HonorCaps:         resp.ContainerConfig.GetHonorCaps(),
+		SyscontMode:       resp.ContainerConfig.GetSyscontMode(),
 		Userns:            resp.ContainerConfig.GetUserns(),
 		UidMappings:       protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
 		GidMappings:       protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
