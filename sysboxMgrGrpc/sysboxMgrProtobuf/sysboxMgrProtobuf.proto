@@ -83,6 +83,8 @@ message ContainerConfig {
     string userns = 11;
     repeated IDMapping uidMappings = 12;
     repeated IDMapping gidMappings = 13;
+    bool fsuidMapFailOnErr = 14;
+    uint32 rootfsUidShiftType = 15;
 }
 
 message RegisterResp {
@@ -95,6 +97,7 @@ message UpdateReq {
     string netns = 3;
     repeated IDMapping uidMappings = 4;
     repeated IDMapping gidMappings = 5;
+    uint32 rootfsUidShiftType = 6;
 }
 
 message UpdateResp {

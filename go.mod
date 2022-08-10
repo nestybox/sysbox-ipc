@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/golang/protobuf v1.4.3
 	github.com/nestybox/sysbox-libs/formatter v0.0.0-00010101000000-000000000000
+	github.com/nestybox/sysbox-libs/idShiftUtils v0.0.0-00010101000000-000000000000
 	github.com/opencontainers/runc v1.0.0-rc9.0.20210126000000-2be806d1391d
 	github.com/opencontainers/runtime-spec v1.0.3-0.20200929063507-e6143ca7d51d
 	github.com/sirupsen/logrus v1.7.0
