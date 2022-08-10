@@ -28,6 +28,7 @@ import (
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/sysboxMgrProtobuf"
 	ipcLib "github.com/nestybox/sysbox-ipc/sysboxMgrLib"
+	"github.com/nestybox/sysbox-libs/idShiftUtils"
 	"github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/opencontainers/runtime-spec/specs-go"
 
@@ -133,6 +134,8 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 		Userns:                  config.Userns,
 		UidMappings:             linuxIDMapToProtoIDMap(config.UidMappings),
 		GidMappings:             linuxIDMapToProtoIDMap(config.GidMappings),
+		FsuidMapFailOnErr:       config.FsuidMapFailOnErr,
+		RootfsUidShiftType:      uint32(config.RootfsUidShiftType),
 	}
 
 	resp := &pb.RegisterResp{
@@ -148,11 +151,12 @@ func (s *ServerStub) Update(ctx context.Context, req *pb.UpdateReq) (*pb.UpdateR
 	}
 
 	updateInfo := &ipcLib.UpdateInfo{
-		Id:          req.GetId(),
-		Userns:      req.GetUserns(),
-		Netns:       req.GetNetns(),
-		UidMappings: protoIDMapToLinuxIDMap(req.GetUidMappings()),
-		GidMappings: protoIDMapToLinuxIDMap(req.GetGidMappings()),
+		Id:                 req.GetId(),
+		Userns:             req.GetUserns(),
+		Netns:              req.GetNetns(),
+		UidMappings:        protoIDMapToLinuxIDMap(req.GetUidMappings()),
+		GidMappings:        protoIDMapToLinuxIDMap(req.GetGidMappings()),
+		RootfsUidShiftType: idShiftUtils.IDShiftType(req.GetRootfsUidShiftType()),
 	}
 
 	if err := s.cb.Update(updateInfo); err != nil {

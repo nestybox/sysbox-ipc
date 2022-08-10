@@ -19,6 +19,7 @@
 package sysboxMgrLib
 
 import (
+	"github.com/nestybox/sysbox-libs/idShiftUtils"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
@@ -34,11 +35,12 @@ type RegistrationInfo struct {
 
 // Sysbox-mgr container update info
 type UpdateInfo struct {
-	Id          string
-	Userns      string
-	Netns       string
-	UidMappings []specs.LinuxIDMapping
-	GidMappings []specs.LinuxIDMapping
+	Id                 string
+	Userns             string
+	Netns              string
+	UidMappings        []specs.LinuxIDMapping
+	GidMappings        []specs.LinuxIDMapping
+	RootfsUidShiftType idShiftUtils.IDShiftType
 }
 
 //
@@ -58,6 +60,8 @@ type ContainerConfig struct {
 	Userns                  string
 	UidMappings             []specs.LinuxIDMapping
 	GidMappings             []specs.LinuxIDMapping
+	FsuidMapFailOnErr       bool
+	RootfsUidShiftType      idShiftUtils.IDShiftType
 }
 
 //

@@ -27,6 +27,7 @@ import (
 
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/sysboxMgrProtobuf"
 	ipcLib "github.com/nestybox/sysbox-ipc/sysboxMgrLib"
+	"github.com/nestybox/sysbox-libs/idShiftUtils"
 	"github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"google.golang.org/grpc"
@@ -90,6 +91,8 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 		Userns:                  resp.ContainerConfig.GetUserns(),
 		UidMappings:             protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
 		GidMappings:             protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
+		FsuidMapFailOnErr:       resp.ContainerConfig.GetFsuidMapFailOnErr(),
+		RootfsUidShiftType:      idShiftUtils.IDShiftType(resp.ContainerConfig.GetRootfsUidShiftType()),
 	}
 
 	return config, nil
@@ -109,11 +112,12 @@ func Update(updateInfo *ipcLib.UpdateInfo) error {
 	defer cancel()
 
 	req := &pb.UpdateReq{
-		Id:          updateInfo.Id,
-		Userns:      updateInfo.Userns,
-		Netns:       updateInfo.Netns,
-		UidMappings: linuxIDMapToProtoIDMap(updateInfo.UidMappings),
-		GidMappings: linuxIDMapToProtoIDMap(updateInfo.GidMappings),
+		Id:                 updateInfo.Id,
+		Userns:             updateInfo.Userns,
+		Netns:              updateInfo.Netns,
+		UidMappings:        linuxIDMapToProtoIDMap(updateInfo.UidMappings),
+		GidMappings:        linuxIDMapToProtoIDMap(updateInfo.GidMappings),
+		RootfsUidShiftType: uint32(updateInfo.RootfsUidShiftType),
 	}
 
 	_, err = ch.Update(ctx, req)
