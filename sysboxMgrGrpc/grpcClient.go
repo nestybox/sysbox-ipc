@@ -28,6 +28,7 @@ import (
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/sysboxMgrProtobuf"
 	ipcLib "github.com/nestybox/sysbox-ipc/sysboxMgrLib"
 	"github.com/nestybox/sysbox-libs/idShiftUtils"
+	"github.com/nestybox/sysbox-libs/shiftfs"
 	"github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"google.golang.org/grpc"
@@ -272,7 +273,7 @@ func PrepMounts(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) err
 // container's rootfs and the given mount list. Returns a list of paths where
 // the shiftfs marks where actually placed (need not be the same as the given
 // mount list). Refer to the sysbox-mgr shiftfs manager for more info.
-func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error) {
+func ReqShiftfsMark(id string, mounts []shiftfs.MountPoint) ([]shiftfs.MountPoint, error) {
 	var resp *pb.ShiftfsMarkResp
 
 	conn, err := connect()
@@ -285,7 +286,7 @@ func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) ([]configs.Shiftfs
 	ctx, cancel := context.WithTimeout(context.Background(), grpcTimeout)
 	defer cancel()
 
-	// convert configs.ShiftfsMount to grpc ShiftfsMark
+	// convert shiftfs.MountPoint to grpc ShiftfsMark
 	markReq := []*pb.ShiftfsMark{}
 	for _, m := range mounts {
 		sm := &pb.ShiftfsMark{
@@ -305,10 +306,10 @@ func ReqShiftfsMark(id string, mounts []configs.ShiftfsMount) ([]configs.Shiftfs
 		return nil, fmt.Errorf("failed to invoke ReqShiftfsMark via grpc: %v", err)
 	}
 
-	// convert grpc ShiftfsMark to configs.ShiftfsMount
-	markpoints := []configs.ShiftfsMount{}
+	// convert grpc ShiftfsMark to shiftfs.MountPoint
+	markpoints := []shiftfs.MountPoint{}
 	for _, m := range resp.GetShiftfsMarks() {
-		sm := configs.ShiftfsMount{
+		sm := shiftfs.MountPoint{
 			Source:   m.Source,
 			Readonly: m.Readonly,
 		}
