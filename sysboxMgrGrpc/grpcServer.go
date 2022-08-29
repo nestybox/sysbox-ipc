@@ -29,6 +29,7 @@ import (
 	pb "github.com/nestybox/sysbox-ipc/sysboxMgrGrpc/sysboxMgrProtobuf"
 	ipcLib "github.com/nestybox/sysbox-ipc/sysboxMgrLib"
 	"github.com/nestybox/sysbox-libs/idShiftUtils"
+	"github.com/nestybox/sysbox-libs/shiftfs"
 	"github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/opencontainers/runtime-spec/specs-go"
 
@@ -45,7 +46,7 @@ type ServerCallbacks struct {
 	SubidAlloc              func(id string, size uint64) (uint32, uint32, error)
 	ReqMounts               func(id string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
 	PrepMounts              func(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error
-	ReqShiftfsMark          func(id string, mounts []configs.ShiftfsMount) ([]configs.ShiftfsMount, error)
+	ReqShiftfsMark          func(id string, mounts []shiftfs.MountPoint) ([]shiftfs.MountPoint, error)
 	ReqFsState              func(id string, rootfs string) ([]configs.FsEntry, error)
 	Pause                   func(id string) error
 	CloneRootfs             func(id string) (string, error)
@@ -259,10 +260,10 @@ func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq)
 		return &pb.ShiftfsMarkResp{}, errors.New("invalid payload")
 	}
 
-	// Convert pb.ShiftfsMark to configs.ShiftfsMount
-	reqList := []configs.ShiftfsMount{}
+	// Convert pb.ShiftfsMark to shiftfs.MountPoint
+	reqList := []shiftfs.MountPoint{}
 	for _, m := range req.GetShiftfsMarks() {
-		sm := configs.ShiftfsMount{
+		sm := shiftfs.MountPoint{
 			Source:   m.Source,
 			Readonly: m.Readonly,
 		}
@@ -274,7 +275,7 @@ func (s *ServerStub) ReqShiftfsMark(ctx context.Context, req *pb.ShiftfsMarkReq)
 		return nil, err
 	}
 
-	// Convert configs.ShiftfsMount to pb.ShiftfsMarkResp
+	// Convert shiftfs.MountPoint to pb.ShiftfsMarkResp
 	markResp := []*pb.ShiftfsMark{}
 	for _, m := range respList {
 		sm := &pb.ShiftfsMark{
