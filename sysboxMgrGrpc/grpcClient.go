@@ -94,6 +94,7 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 		GidMappings:             protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
 		FsuidMapFailOnErr:       resp.ContainerConfig.GetFsuidMapFailOnErr(),
 		RootfsUidShiftType:      idShiftUtils.IDShiftType(resp.ContainerConfig.GetRootfsUidShiftType()),
+		NoShiftfsOnFuse:         resp.ContainerConfig.GetNoShiftfsOnFuse(),
 	}
 
 	return config, nil

@@ -85,6 +85,7 @@ message ContainerConfig {
     repeated IDMapping gidMappings = 13;
     bool fsuidMapFailOnErr = 14;
     uint32 rootfsUidShiftType = 15;
+    bool noShiftfsOnFuse = 16;
 }
 
 message RegisterResp {

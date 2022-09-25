@@ -50,6 +50,7 @@ type ContainerConfig struct {
 	AliasDns                bool
 	ShiftfsOk               bool
 	ShiftfsOnOverlayfsOk    bool
+	NoShiftfsOnFuse         bool
 	IDMapMountOk            bool
 	OverlayfsOnIDMapMountOk bool
 	NoRootfsCloning         bool

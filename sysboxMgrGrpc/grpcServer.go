@@ -137,6 +137,7 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 		GidMappings:             linuxIDMapToProtoIDMap(config.GidMappings),
 		FsuidMapFailOnErr:       config.FsuidMapFailOnErr,
 		RootfsUidShiftType:      uint32(config.RootfsUidShiftType),
+		NoShiftfsOnFuse:         config.NoShiftfsOnFuse,
 	}
 
 	resp := &pb.RegisterResp{
