@@ -74,17 +74,18 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 	}
 
 	config := &ipcLib.ContainerConfig{
-		AliasDns:          resp.ContainerConfig.GetAliasDns(),
-		NoShiftfs:         resp.ContainerConfig.GetNoShiftfs(),
-		NoIDMappedMount:   resp.ContainerConfig.GetNoIDMappedMount(),
-		NoRootfsCloning:   resp.ContainerConfig.GetNoRootfsCloning(),
-		IgnoreSysfsChown:  resp.ContainerConfig.GetIgnoreSysfsChown(),
-		AllowTrustedXattr: resp.ContainerConfig.GetAllowTrustedXattr(),
-		HonorCaps:         resp.ContainerConfig.GetHonorCaps(),
-		SyscontMode:       resp.ContainerConfig.GetSyscontMode(),
-		Userns:            resp.ContainerConfig.GetUserns(),
-		UidMappings:       protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
-		GidMappings:       protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
+		AliasDns:                resp.ContainerConfig.GetAliasDns(),
+		UseShiftfs:              resp.ContainerConfig.GetUseShiftfs(),
+		UseIDMapping:            resp.ContainerConfig.GetUseIDMapping(),
+		UseIDMappingOnOverlayfs: resp.ContainerConfig.GetUseIDMappingOnOverlayfs(),
+		NoRootfsCloning:         resp.ContainerConfig.GetNoRootfsCloning(),
+		IgnoreSysfsChown:        resp.ContainerConfig.GetIgnoreSysfsChown(),
+		AllowTrustedXattr:       resp.ContainerConfig.GetAllowTrustedXattr(),
+		HonorCaps:               resp.ContainerConfig.GetHonorCaps(),
+		SyscontMode:             resp.ContainerConfig.GetSyscontMode(),
+		Userns:                  resp.ContainerConfig.GetUserns(),
+		UidMappings:             protoIDMapToLinuxIDMap(resp.ContainerConfig.GetUidMappings()),
+		GidMappings:             protoIDMapToLinuxIDMap(resp.ContainerConfig.GetGidMappings()),
 	}
 
 	return config, nil

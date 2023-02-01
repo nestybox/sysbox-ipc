@@ -120,17 +120,18 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 	}
 
 	mgrConfig := pb.ContainerConfig{
-		AliasDns:          config.AliasDns,
-		NoShiftfs:         config.NoShiftfs,
-		NoIDMappedMount:   config.NoIDMappedMount,
-		NoRootfsCloning:   config.NoRootfsCloning,
-		IgnoreSysfsChown:  config.IgnoreSysfsChown,
-		AllowTrustedXattr: config.AllowTrustedXattr,
-		HonorCaps:         config.HonorCaps,
-		SyscontMode:       config.SyscontMode,
-		Userns:            config.Userns,
-		UidMappings:       linuxIDMapToProtoIDMap(config.UidMappings),
-		GidMappings:       linuxIDMapToProtoIDMap(config.GidMappings),
+		AliasDns:                config.AliasDns,
+		UseShiftfs:              config.UseShiftfs,
+		UseIDMapping:            config.UseIDMapping,
+		UseIDMappingOnOverlayfs: config.UseIDMappingOnOverlayfs,
+		NoRootfsCloning:         config.NoRootfsCloning,
+		IgnoreSysfsChown:        config.IgnoreSysfsChown,
+		AllowTrustedXattr:       config.AllowTrustedXattr,
+		HonorCaps:               config.HonorCaps,
+		SyscontMode:             config.SyscontMode,
+		Userns:                  config.Userns,
+		UidMappings:             linuxIDMapToProtoIDMap(config.UidMappings),
+		GidMappings:             linuxIDMapToProtoIDMap(config.GidMappings),
 	}
 
 	resp := &pb.RegisterResp{

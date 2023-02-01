@@ -71,16 +71,17 @@ message RegisterReq {
 
 message ContainerConfig {
     bool aliasDns = 1;
-    bool noShiftfs = 2;
-    bool noIDMappedMount = 3;
-    bool noRootfsCloning = 4;
-    bool ignoreSysfsChown = 5;
-    bool allowTrustedXattr = 6;
-    bool honorCaps = 7;
-    bool syscontMode = 8;
-    string userns = 9;
-    repeated IDMapping uidMappings = 10;
-    repeated IDMapping gidMappings = 11;
+    bool useShiftfs = 2;
+    bool useIDMapping = 3;
+    bool useIDMappingOnOverlayfs = 4;
+    bool noRootfsCloning = 5;
+    bool ignoreSysfsChown = 6;
+    bool allowTrustedXattr = 7;
+    bool honorCaps = 8;
+    bool syscontMode = 9;
+    string userns = 10;
+    repeated IDMapping uidMappings = 11;
+    repeated IDMapping gidMappings = 12;
 }
 
 message RegisterResp {
