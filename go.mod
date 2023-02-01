@@ -13,20 +13,14 @@ require (
 	google.golang.org/protobuf v1.25.0
 )
 
-replace github.com/nestybox/sysbox-ipc => ./
-
-replace github.com/opencontainers/runc => ../sysbox-runc
-
-replace github.com/nestybox/sysbox-libs/libseccomp-golang => ../sysbox-libs/libseccomp-golang
-
-replace github.com/nestybox/sysbox-libs/formatter => ../sysbox-libs/formatter
-
-replace github.com/nestybox/sysbox-libs/capability => ../sysbox-libs/capability
-
-replace github.com/nestybox/sysbox-libs/utils => ../sysbox-libs/utils
-
-replace github.com/nestybox/sysbox-libs/dockerUtils => ../sysbox-libs/dockerUtils
-
-replace github.com/nestybox/sysbox-libs/idShiftUtils => ../sysbox-libs/idShiftUtils
-
-replace github.com/godbus/dbus => github.com/godbus/dbus/v5 v5.0.3
+replace (
+	github.com/nestybox/sysbox-ipc => ./
+	github.com/opencontainers/runc => ../sysbox-runc
+	github.com/nestybox/sysbox-libs/libseccomp-golang => ../sysbox-libs/libseccomp-golang
+	github.com/nestybox/sysbox-libs/formatter => ../sysbox-libs/formatter
+	github.com/nestybox/sysbox-libs/capability => ../sysbox-libs/capability
+	github.com/nestybox/sysbox-libs/utils => ../sysbox-libs/utils
+	github.com/nestybox/sysbox-libs/dockerUtils => ../sysbox-libs/dockerUtils
+	github.com/nestybox/sysbox-libs/idShiftUtils => ../sysbox-libs/idShiftUtils
+	github.com/godbus/dbus => github.com/godbus/dbus/v5 v5.0.3
+)
