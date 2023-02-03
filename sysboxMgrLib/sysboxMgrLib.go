@@ -47,6 +47,7 @@ type UpdateInfo struct {
 type ContainerConfig struct {
 	AliasDns                bool
 	UseShiftfs              bool
+	UseShiftfsOnOverlayfs   bool
 	UseIDMapping            bool
 	UseIDMappingOnOverlayfs bool
 	NoRootfsCloning         bool
