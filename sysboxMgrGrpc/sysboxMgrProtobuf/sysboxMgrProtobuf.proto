@@ -71,10 +71,10 @@ message RegisterReq {
 
 message ContainerConfig {
     bool aliasDns = 1;
-    bool useShiftfs = 2;
-    bool useShiftfsOnOverlayfs = 3;
-    bool useIDMapping = 4;
-    bool useIDMappingOnOverlayfs = 5;
+    bool ShiftfsOk = 2;
+    bool ShiftfsOnOverlayfsOk = 3;
+    bool IDMapMountOk = 4;
+    bool OverlayfsOnIDMapMountOk = 5;
     bool noRootfsCloning = 6;
     bool ignoreSysfsChown = 7;
     bool allowTrustedXattr = 8;

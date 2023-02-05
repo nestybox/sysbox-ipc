@@ -75,9 +75,10 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 
 	config := &ipcLib.ContainerConfig{
 		AliasDns:                resp.ContainerConfig.GetAliasDns(),
-		UseShiftfs:              resp.ContainerConfig.GetUseShiftfs(),
-		UseIDMapping:            resp.ContainerConfig.GetUseIDMapping(),
-		UseIDMappingOnOverlayfs: resp.ContainerConfig.GetUseIDMappingOnOverlayfs(),
+		ShiftfsOk:               resp.ContainerConfig.GetShiftfsOk(),
+		ShiftfsOnOverlayfsOk:    resp.ContainerConfig.GetShiftfsOnOverlayfsOk(),
+		IDMapMountOk:            resp.ContainerConfig.GetIDMapMountOk(),
+		OverlayfsOnIDMapMountOk: resp.ContainerConfig.GetOverlayfsOnIDMapMountOk(),
 		NoRootfsCloning:         resp.ContainerConfig.GetNoRootfsCloning(),
 		IgnoreSysfsChown:        resp.ContainerConfig.GetIgnoreSysfsChown(),
 		AllowTrustedXattr:       resp.ContainerConfig.GetAllowTrustedXattr(),

@@ -121,9 +121,10 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 
 	mgrConfig := pb.ContainerConfig{
 		AliasDns:                config.AliasDns,
-		UseShiftfs:              config.UseShiftfs,
-		UseIDMapping:            config.UseIDMapping,
-		UseIDMappingOnOverlayfs: config.UseIDMappingOnOverlayfs,
+		ShiftfsOk:               config.ShiftfsOk,
+		ShiftfsOnOverlayfsOk:    config.ShiftfsOnOverlayfsOk,
+		IDMapMountOk:            config.IDMapMountOk,
+		OverlayfsOnIDMapMountOk: config.OverlayfsOnIDMapMountOk,
 		NoRootfsCloning:         config.NoRootfsCloning,
 		IgnoreSysfsChown:        config.IgnoreSysfsChown,
 		AllowTrustedXattr:       config.AllowTrustedXattr,
