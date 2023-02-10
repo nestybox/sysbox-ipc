@@ -30,6 +30,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var grpcTimeout time.Duration = 20 * time.Second
+
 // Container info passed by the client to the server across the grpc channel
 type ContainerData struct {
 	Id            string
@@ -123,7 +125,7 @@ func SendContainerPreRegistration(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), grpcTimeout)
 	defer cancel()
 
 	pbData, err := containerDataToPbData(data)
@@ -154,7 +156,7 @@ func SendContainerRegistration(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), grpcTimeout)
 	defer cancel()
 
 	pbData, err := containerDataToPbData(data)
@@ -185,7 +187,7 @@ func SendContainerUnregistration(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), grpcTimeout)
 	defer cancel()
 
 	pbData, err := containerDataToPbData(data)
@@ -217,7 +219,7 @@ func SendContainerUpdate(data *ContainerData) (err error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), grpcTimeout)
 	defer cancel()
 
 	pbData, err := containerDataToPbData(data)
@@ -248,7 +250,7 @@ func GetMountpoint() (string, error) {
 
 	cntrChanIntf := pb.NewSysboxStateChannelClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), grpcTimeout)
 	defer cancel()
 
 	mpResp, err = cntrChanIntf.GetMountpoint(ctx, &pb.MountpointReq{})
