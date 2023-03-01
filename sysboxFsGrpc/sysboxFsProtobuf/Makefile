@@ -31,7 +31,7 @@ RUNC_FS_PB := sysboxFsProtobuf.pb.go
 .DEFAULT: $(RUNC_FS_PB)
 
 $(RUNC_FS_PB): $(RUNC_FS_SRC)
-	protoc -I . -I /usr/local/include/ sysboxFsProtobuf.proto --go_out=plugins=grpc:.
+	GOFLAGS='-buildvcs=false' protoc -I . -I /usr/local/include/ sysboxFsProtobuf.proto --go_out=plugins=grpc:.
 
 clean:
 	rm -f $(RUNC_FS_PB)
