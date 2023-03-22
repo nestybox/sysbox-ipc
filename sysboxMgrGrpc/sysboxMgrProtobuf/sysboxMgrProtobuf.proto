@@ -40,6 +40,9 @@ service sysboxMgrStateChannel {
     // Pause request
     rpc Pause (PauseReq) returns (PauseResp) {}
 
+    // Resume request
+    rpc Resume (ResumeReq) returns (ResumeResp) {}
+
     // Clone rootfs request
     rpc ReqCloneRootfs (CloneRootfsReq) returns (CloneRootfsResp) {}
 
@@ -151,14 +154,12 @@ message MountPrepResp {
 message MountReqInfo {
     uint32 kind = 1;
     string dest = 2;
-    bool shiftUids = 3;
 }
 
 message MountReq {
     string id = 1;
-    uint32 uid = 2;
-    uint32 gid = 3;
-    repeated MountReqInfo reqList = 4;
+    uint32 rootfsUidShiftType = 2;
+    repeated MountReqInfo reqList = 3;
 }
 
 message Mount {
@@ -219,6 +220,17 @@ message PauseReq {
 }
 
 message PauseResp {
+}
+
+//
+// Resume request
+//
+
+message ResumeReq {
+    string id = 1;
+}
+
+message ResumeResp {
 }
 
 //

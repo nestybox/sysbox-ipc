@@ -180,7 +180,7 @@ func SubidAlloc(id string, size uint64) (uint32, uint32, error) {
 }
 
 // ReqMounts requests the sysbox-mgr to setup sys container special mounts
-func ReqMounts(id string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error) {
+func ReqMounts(id string, rootfsUidShiftType idShiftUtils.IDShiftType, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error) {
 
 	conn, err := connect()
 	if err != nil {
@@ -199,18 +199,16 @@ func ReqMounts(id string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]spe
 	pbReqList := []*pb.MountReqInfo{}
 	for _, info := range reqList {
 		pbInfo := &pb.MountReqInfo{
-			Kind:      uint32(info.Kind),
-			Dest:      info.Dest,
-			ShiftUids: info.ShiftUids,
+			Kind: uint32(info.Kind),
+			Dest: info.Dest,
 		}
 		pbReqList = append(pbReqList, pbInfo)
 	}
 
 	req := &pb.MountReq{
-		Id:      id,
-		Uid:     uid,
-		Gid:     gid,
-		ReqList: pbReqList,
+		Id:                 id,
+		RootfsUidShiftType: uint32(rootfsUidShiftType),
+		ReqList:            pbReqList,
 	}
 
 	resp, err := ch.ReqMounts(ctx, req)
@@ -381,6 +379,31 @@ func Pause(id string) error {
 	_, err = ch.Pause(ctx, req)
 	if err != nil {
 		return fmt.Errorf("failed to invoke Pause via grpc: %v", err)
+	}
+
+	return nil
+}
+
+// Resume notifies the sysbox-mgr that the container has been resumed.
+// 'id' is the containers id
+func Resume(id string) error {
+	conn, err := connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), grpcTimeout)
+	defer cancel()
+
+	req := &pb.ResumeReq{
+		Id: id,
+	}
+
+	_, err = ch.Resume(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to invoke Resume via grpc: %v", err)
 	}
 
 	return nil
