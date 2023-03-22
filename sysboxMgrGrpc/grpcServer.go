@@ -44,11 +44,12 @@ type ServerCallbacks struct {
 	Update                  func(updateInfo *ipcLib.UpdateInfo) error
 	Unregister              func(id string) error
 	SubidAlloc              func(id string, size uint64) (uint32, uint32, error)
-	ReqMounts               func(id string, uid, gid uint32, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
+	ReqMounts               func(id string, rootfsUidShiftType idShiftUtils.IDShiftType, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
 	PrepMounts              func(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error
 	ReqShiftfsMark          func(id string, mounts []shiftfs.MountPoint) ([]shiftfs.MountPoint, error)
 	ReqFsState              func(id string, rootfs string) ([]configs.FsEntry, error)
 	Pause                   func(id string) error
+	Resume                  func(id string) error
 	CloneRootfs             func(id string) (string, error)
 	ChownClonedRootfs       func(id string, uidOffset, gidOffset int32) error
 	RevertClonedRootfsChown func(id string) error
@@ -205,14 +206,13 @@ func (s *ServerStub) ReqMounts(ctx context.Context, req *pb.MountReq) (*pb.Mount
 	reqList := []ipcLib.MountReqInfo{}
 	for _, pbInfo := range req.ReqList {
 		info := ipcLib.MountReqInfo{
-			Kind:      ipcLib.MntKind(pbInfo.GetKind()),
-			Dest:      pbInfo.GetDest(),
-			ShiftUids: pbInfo.GetShiftUids(),
+			Kind: ipcLib.MntKind(pbInfo.GetKind()),
+			Dest: pbInfo.GetDest(),
 		}
 		reqList = append(reqList, info)
 	}
 
-	mounts, err := s.cb.ReqMounts(req.GetId(), req.GetUid(), req.GetGid(), reqList)
+	mounts, err := s.cb.ReqMounts(req.GetId(), idShiftUtils.IDShiftType(req.GetRootfsUidShiftType()), reqList)
 	if err != nil {
 		return nil, err
 	}
@@ -331,6 +331,18 @@ func (s *ServerStub) Pause(ctx context.Context, req *pb.PauseReq) (*pb.PauseResp
 	}
 
 	return &pb.PauseResp{}, nil
+}
+
+func (s *ServerStub) Resume(ctx context.Context, req *pb.ResumeReq) (*pb.ResumeResp, error) {
+	if req == nil {
+		return &pb.ResumeResp{}, errors.New("invalid payload")
+	}
+
+	if err := s.cb.Resume(req.GetId()); err != nil {
+		return nil, err
+	}
+
+	return &pb.ResumeResp{}, nil
 }
 
 func (s *ServerStub) ReqCloneRootfs(ctx context.Context, req *pb.CloneRootfsReq) (*pb.CloneRootfsResp, error) {
