@@ -44,6 +44,7 @@ type ServerCallbacks struct {
 	Update                  func(updateInfo *ipcLib.UpdateInfo) error
 	Unregister              func(id string) error
 	SubidAlloc              func(id string, size uint64) (uint32, uint32, error)
+	SetupDevices            func(id string, devices []specs.LinuxDevice) ([]specs.LinuxDevice, error)
 	ReqMounts               func(id string, rootfsUidShiftType idShiftUtils.IDShiftType, reqList []ipcLib.MountReqInfo) ([]specs.Mount, error)
 	PrepMounts              func(id string, uid, gid uint32, prepList []ipcLib.MountPrepInfo) error
 	ReqShiftfsMark          func(id string, mounts []shiftfs.MountPoint) ([]shiftfs.MountPoint, error)
@@ -195,6 +196,69 @@ func (s *ServerStub) SubidAlloc(ctx context.Context, req *pb.SubidAllocReq) (*pb
 	return &pb.SubidAllocResp{
 		Uid: uid,
 		Gid: gid,
+	}, nil
+}
+
+func (s *ServerStub) SetupDevices(ctx context.Context, req *pb.DeviceSetupReq) (*pb.DeviceSetupResp, error) {
+	if req == nil {
+		return &pb.DeviceSetupResp{}, errors.New("invalid payload")
+	}
+
+	// convert []*pb.Device -> []*specs.LinuxDevice
+	devs := []specs.LinuxDevice{}
+	for _, d := range req.Devices {
+		mode := os.FileMode(d.GetFilemode())
+		uid := d.GetUid()
+		gid := d.GetGid()
+		dev := specs.LinuxDevice{
+			Type:     d.GetType(),
+			Path:     d.GetPath(),
+			Major:    d.GetMajor(),
+			Minor:    d.GetMinor(),
+			FileMode: &mode,
+			UID:      &uid,
+			GID:      &gid,
+		}
+		devs = append(devs, dev)
+	}
+
+	devices, err := s.cb.SetupDevices(req.GetId(), devs)
+	if err != nil {
+		return nil, err
+	}
+
+	// convert []*specs.LinuxDevice -> []*pb.Device
+	pbDevices := []*pb.Device{}
+	for _, d := range devices {
+		var (
+			fileMode uint32
+			uid      uint32
+			gid      uint32
+		)
+		if d.FileMode != nil {
+			fileMode = uint32(*d.FileMode)
+		}
+		if d.UID != nil {
+			uid = uint32(*d.UID)
+		}
+		if d.GID != nil {
+			gid = uint32(*d.GID)
+		}
+
+		pbd := &pb.Device{
+			Type:     d.Type,
+			Path:     d.Path,
+			Major:    d.Major,
+			Minor:    d.Minor,
+			Filemode: fileMode,
+			Uid:      uid,
+			Gid:      gid,
+		}
+		pbDevices = append(pbDevices, pbd)
+	}
+
+	return &pb.DeviceSetupResp{
+		Devices: pbDevices,
 	}, nil
 }
 
