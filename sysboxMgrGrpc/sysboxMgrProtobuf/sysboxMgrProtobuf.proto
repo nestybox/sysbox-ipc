@@ -37,6 +37,9 @@ service sysboxMgrStateChannel {
     // FsState request
     rpc ReqFsState (FsStateReq) returns (FsStateResp) {}
 
+    // Device setup request
+    rpc SetupDevices (DeviceSetupReq) returns (DeviceSetupResp) {}
+
     // Pause request
     rpc Pause (PauseReq) returns (PauseResp) {}
 
@@ -210,6 +213,29 @@ message FsEntry {
 
 message FsStateResp {
     repeated FsEntry fsEntries = 1;
+}
+
+//
+// Device Setup
+//
+
+message DeviceSetupReq {
+    string id = 1;
+    repeated Device devices = 2;
+}
+
+message Device {
+    string path = 1;
+    string type = 2;
+    int64 major = 3;
+    int64 minor = 4;
+    uint32 filemode = 5;
+    uint32 uid = 6;
+    uint32 gid = 7;
+}
+
+message DeviceSetupResp {
+    repeated Device devices = 1;
 }
 
 //

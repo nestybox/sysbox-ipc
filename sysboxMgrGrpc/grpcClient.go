@@ -21,6 +21,7 @@ package sysboxMgrGrpc
 import (
 	"context"
 	"fmt"
+	"io/fs"
 	"net"
 	"os"
 	"time"
@@ -358,6 +359,83 @@ func ReqFsState(id, rootfs string) ([]configs.FsEntry, error) {
 	}
 
 	return fsEntries, nil
+}
+
+// SetupDevices requests sysbox-mgr to setup devices for the container.
+func SetupDevices(id string, devs []specs.LinuxDevice) ([]specs.LinuxDevice, error) {
+	conn, err := connect()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect with sysbox-mgr: %v", err)
+	}
+	defer conn.Close()
+
+	// We don't use context timeout for this API because the time it takes to
+	// setup the devices can be large, in particular for sys containers that come
+	// preloaded with heavy inner images and in machines where the load is high.
+	ch := pb.NewSysboxMgrStateChannelClient(conn)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Convert []specs.LinuxDevice -> []*pb.Device
+	pbDevs := []*pb.Device{}
+	for _, d := range devs {
+		var (
+			filemode uint32
+			uid      uint32
+			gid      uint32
+		)
+		if d.FileMode != nil {
+			filemode = uint32(*d.FileMode)
+		}
+		if d.UID != nil {
+			uid = uint32(*d.UID)
+		}
+		if d.GID != nil {
+			gid = uint32(*d.GID)
+		}
+
+		pbDev := &pb.Device{
+			Path:     d.Path,
+			Type:     d.Type,
+			Major:    d.Major,
+			Minor:    d.Minor,
+			Filemode: filemode,
+			Uid:      uid,
+			Gid:      gid,
+		}
+		pbDevs = append(pbDevs, pbDev)
+	}
+
+	req := &pb.DeviceSetupReq{
+		Id:      id,
+		Devices: pbDevs,
+	}
+
+	resp, err := ch.SetupDevices(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to setup devices via grpc: %v", err)
+	}
+
+	// Convert []*pb.Device -> []specs.LinuxDevice
+	specDevices := []specs.LinuxDevice{}
+	for _, m := range resp.Devices {
+		filemode := fs.FileMode(m.GetFilemode())
+		uid := m.GetUid()
+		gid := m.GetGid()
+
+		specd := specs.LinuxDevice{
+			Path:     m.GetPath(),
+			Type:     m.GetType(),
+			Major:    m.GetMajor(),
+			Minor:    m.GetMinor(),
+			FileMode: &filemode,
+			UID:      &uid,
+			GID:      &gid,
+		}
+		specDevices = append(specDevices, specd)
+	}
+
+	return specDevices, nil
 }
 
 // Pause notifies the sysbox-mgr that the container has been paused.
