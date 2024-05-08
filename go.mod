@@ -8,8 +8,8 @@ require (
 	github.com/nestybox/sysbox-libs/idShiftUtils v0.0.0-00010101000000-000000000000
 	github.com/nestybox/sysbox-libs/shiftfs v0.0.0-00010101000000-000000000000
 	github.com/opencontainers/runc v1.1.4
-	github.com/opencontainers/runtime-spec v1.0.3-0.20200929063507-e6143ca7d51d
-	github.com/sirupsen/logrus v1.9.0
+	github.com/opencontainers/runtime-spec v1.1.1-0.20230823135140-4fec88fd00a4
+	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f
 	google.golang.org/grpc v1.34.1
 	google.golang.org/protobuf v1.25.0
