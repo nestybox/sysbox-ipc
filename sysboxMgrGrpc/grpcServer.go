@@ -139,6 +139,7 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 		FsuidMapFailOnErr:       config.FsuidMapFailOnErr,
 		RootfsUidShiftType:      uint32(config.RootfsUidShiftType),
 		NoShiftfsOnFuse:         config.NoShiftfsOnFuse,
+		RelaxedReadOnly:         config.RelaxedReadOnly,
 	}
 
 	resp := &pb.RegisterResp{

@@ -43,9 +43,7 @@ type UpdateInfo struct {
 	RootfsUidShiftType idShiftUtils.IDShiftType
 }
 
-//
 // Sysbox-mgr mandated container configs (passed from sysbox-mgr -> sysbox-runc)
-//
 type ContainerConfig struct {
 	AliasDns                bool
 	ShiftfsOk               bool
@@ -63,6 +61,7 @@ type ContainerConfig struct {
 	GidMappings             []specs.LinuxIDMapping
 	FsuidMapFailOnErr       bool
 	RootfsUidShiftType      idShiftUtils.IDShiftType
+	RelaxedReadOnly         bool
 }
 
 //

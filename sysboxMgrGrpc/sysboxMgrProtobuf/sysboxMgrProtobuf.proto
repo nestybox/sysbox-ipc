@@ -89,6 +89,7 @@ message ContainerConfig {
     bool fsuidMapFailOnErr = 14;
     uint32 rootfsUidShiftType = 15;
     bool noShiftfsOnFuse = 16;
+    bool relaxedReadOnly = 17;
 }
 
 message RegisterResp {
