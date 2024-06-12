@@ -95,6 +95,7 @@ func Register(regInfo *ipcLib.RegistrationInfo) (*ipcLib.ContainerConfig, error)
 		FsuidMapFailOnErr:       resp.ContainerConfig.GetFsuidMapFailOnErr(),
 		RootfsUidShiftType:      idShiftUtils.IDShiftType(resp.ContainerConfig.GetRootfsUidShiftType()),
 		NoShiftfsOnFuse:         resp.ContainerConfig.GetNoShiftfsOnFuse(),
+		RelaxedReadOnly:         resp.ContainerConfig.GetRelaxedReadOnly(),
 	}
 
 	return config, nil
