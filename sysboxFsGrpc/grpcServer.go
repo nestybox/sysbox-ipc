@@ -64,6 +64,7 @@ type Callback func(client interface{}, c *ContainerData) error
 type CallbacksMap = map[MessageType]Callback
 
 type Server struct {
+	pb.UnimplementedSysboxStateChannelServer
 	Ctx       interface{}
 	Callbacks CallbacksMap
 	FuseMp    string
