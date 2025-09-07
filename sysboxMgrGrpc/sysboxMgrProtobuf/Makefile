@@ -27,13 +27,14 @@
 
 RUNC_FS_SRC := sysboxMgrProtobuf.proto
 RUNC_FS_PB := sysboxMgrProtobuf.pb.go
+RUNC_FS_GRPC_PB := sysboxMgrProtobuf_grpc.pb.go
 
-.DEFAULT: $(RUNC_FS_PB)
+.DEFAULT: $(RUNC_FS_PB) $(RUNC_FS_GRPC_PB)
 
-$(RUNC_FS_PB): $(RUNC_FS_SRC)
-	GOFLAGS='-buildvcs=false' protoc -I . -I /usr/local/include/ sysboxMgrProtobuf.proto --go_out=plugins=grpc:.
+$(RUNC_FS_PB) $(RUNC_FS_GRPC_PB): $(RUNC_FS_SRC)
+	GOFLAGS='-buildvcs=false' protoc -I . -I /usr/local/include/ sysboxMgrProtobuf.proto --go_out=. --go-grpc_out=.
 
 clean:
-	rm -f $(RUNC_FS_PB)
+	rm -f $(RUNC_FS_PB) $(RUNC_FS_GRPC_PB)
 
 distclean: clean

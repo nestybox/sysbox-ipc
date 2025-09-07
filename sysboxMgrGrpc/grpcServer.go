@@ -57,6 +57,7 @@ type ServerCallbacks struct {
 }
 
 type ServerStub struct {
+	pb.UnimplementedSysboxMgrStateChannelServer
 	cb *ServerCallbacks
 }
 
