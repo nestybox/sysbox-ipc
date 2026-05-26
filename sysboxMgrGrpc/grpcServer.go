@@ -140,6 +140,7 @@ func (s *ServerStub) Register(ctx context.Context, req *pb.RegisterReq) (*pb.Reg
 		RootfsUidShiftType:      uint32(config.RootfsUidShiftType),
 		NoShiftfsOnFuse:         config.NoShiftfsOnFuse,
 		RelaxedReadOnly:         config.RelaxedReadOnly,
+		OverlayfsUpperIDMap:     config.OverlayfsUpperIDMap,
 	}
 
 	resp := &pb.RegisterResp{

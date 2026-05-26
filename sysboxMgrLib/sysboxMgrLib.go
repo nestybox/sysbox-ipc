@@ -51,6 +51,7 @@ type ContainerConfig struct {
 	NoShiftfsOnFuse         bool
 	IDMapMountOk            bool
 	OverlayfsOnIDMapMountOk bool
+	OverlayfsUpperIDMap     bool
 	NoRootfsCloning         bool
 	IgnoreSysfsChown        bool
 	AllowTrustedXattr       bool
