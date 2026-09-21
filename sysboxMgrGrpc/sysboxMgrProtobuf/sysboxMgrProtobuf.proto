@@ -158,6 +158,11 @@ message MountPrepResp {
 message MountReqInfo {
     uint32 kind = 1;
     string dest = 2;
+
+    // source is only used by MntRoAnchor (kind) requests, to carry the real
+    // host path that sysbox-mgr should anchor. Other kinds compute their own
+    // source internally and ignore this field.
+    string source = 3;
 }
 
 message MountReq {
