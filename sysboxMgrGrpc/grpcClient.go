@@ -201,8 +201,9 @@ func ReqMounts(id string, rootfsUidShiftType idShiftUtils.IDShiftType, reqList [
 	pbReqList := []*pb.MountReqInfo{}
 	for _, info := range reqList {
 		pbInfo := &pb.MountReqInfo{
-			Kind: uint32(info.Kind),
-			Dest: info.Dest,
+			Kind:   uint32(info.Kind),
+			Dest:   info.Dest,
+			Source: info.Source,
 		}
 		pbReqList = append(pbReqList, pbInfo)
 	}

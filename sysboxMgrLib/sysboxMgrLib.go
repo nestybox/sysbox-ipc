@@ -84,6 +84,7 @@ const (
 	MntVarLibBuildkit
 	MntVarLibContainerdOvfs
 	MntUsrSrcLinuxHdr
+	MntRoAnchor
 )
 
 func (k MntKind) String() string {
@@ -106,6 +107,8 @@ func (k MntKind) String() string {
 		str = "var-lib-containerd-ovfs"
 	case MntUsrSrcLinuxHdr:
 		str = "usr-src-linux-header"
+	case MntRoAnchor:
+		str = "ro-anchor"
 	}
 
 	return str
@@ -114,4 +117,9 @@ func (k MntKind) String() string {
 type MountReqInfo struct {
 	Kind MntKind
 	Dest string
+
+	// Source is only used by MntRoAnchor requests, to carry the real host
+	// path that sysbox-mgr should anchor (see setupImmutableMountAnchor()).
+	// Other kinds compute their own source internally and ignore this field.
+	Source string
 }
