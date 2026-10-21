@@ -1,6 +1,6 @@
 module github.com/nestybox/sysbox-ipc
 
-go 1.23.0
+go 1.24.0
 
 require (
 	github.com/golang/protobuf v1.5.4
@@ -9,19 +9,19 @@ require (
 	github.com/nestybox/sysbox-libs/shiftfs v0.0.0-00010101000000-000000000000
 	github.com/opencontainers/runc v1.1.4
 	github.com/opencontainers/runtime-spec v1.1.1-0.20230823135140-4fec88fd00a4
-	github.com/sirupsen/logrus v1.9.3
-	golang.org/x/sys v0.35.0
-	google.golang.org/grpc v1.75.0
-	google.golang.org/protobuf v1.36.8
+	github.com/sirupsen/logrus v1.10.2
+	golang.org/x/sys v0.38.0
+	google.golang.org/grpc v1.75.1
+	google.golang.org/protobuf v1.36.10
 )
 
 require (
 	github.com/coreos/go-systemd/v22 v22.1.0 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
-	github.com/docker/docker v26.0.0+incompatible // indirect
 	github.com/godbus/dbus/v5 v5.0.3 // indirect
 	github.com/joshlf/go-acl v0.0.0-20200411065538-eae00ae38531 // indirect
 	github.com/karrick/godirwalk v1.16.1 // indirect
+	github.com/moby/moby/client v0.5.0 // indirect
 	github.com/nestybox/sysbox-libs/linuxUtils v0.0.0-00010101000000-000000000000 // indirect
 	github.com/nestybox/sysbox-libs/mount v0.0.0-20240602025437-33cbdf5a9e98 // indirect
 	github.com/nestybox/sysbox-libs/utils v0.0.0-00010101000000-000000000000 // indirect
